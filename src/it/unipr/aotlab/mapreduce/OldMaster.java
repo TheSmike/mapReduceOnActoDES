@@ -17,7 +17,7 @@ import it.unipr.aotlab.actodes.runtime.active.ThreadScheduler;
  * @author Omi087
  *
  */
-public class Master extends Behavior {
+public class OldMaster extends Behavior {
 
 	@Override
 	public void initialize(Binder b, Object[] v) {
