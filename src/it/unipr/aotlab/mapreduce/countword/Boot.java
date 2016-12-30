@@ -15,7 +15,7 @@ public class Boot {
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(OldScheduler.class.getName());
 		c.setCreator(WordCountMaster.class.getName());
-		c.setArguments(workers, stringhe);
+		c.setArguments(workers, "inputPath", "outputPath");
 		c.setFilter(Logger.ALLLOGS);
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();
