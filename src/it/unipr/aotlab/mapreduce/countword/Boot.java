@@ -5,15 +5,14 @@ import it.unipr.aotlab.actodes.logging.ConsoleWriter;
 import it.unipr.aotlab.actodes.logging.Logger;
 import it.unipr.aotlab.actodes.logging.TextualFormatter;
 import it.unipr.aotlab.actodes.runtime.Controller;
-import it.unipr.aotlab.actodes.runtime.passive.OldScheduler;
+import it.unipr.aotlab.actodes.runtime.active.ThreadPoolScheduler;
 
 public class Boot {
 
 	public static void main(String[] args) {
-		final int workers = 3;
-		final int stringhe = 5;
+		final int workers = 3;	
 		Configuration c = Controller.INSTANCE.getConfiguration();
-		c.setScheduler(OldScheduler.class.getName());
+		c.setScheduler(ThreadPoolScheduler.class.getName());
 		c.setCreator(WordCountMaster.class.getName());
 		c.setArguments(workers, "inputPath", "outputPath");
 		c.setFilter(Logger.ALLLOGS);

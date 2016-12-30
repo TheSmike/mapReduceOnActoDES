@@ -8,6 +8,7 @@ import it.unipr.aotlab.actodes.interaction.Kill;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
+import it.unipr.aotlab.mapreduce.file.FileHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**
@@ -24,6 +25,15 @@ public final class WordCountMaster extends Behavior {
 
 	// Current number of response.
 	private int responseCount;
+	// index of last invoked worker
+	private int currentWorkerIdx = 0;
+	// blocks number to decrement
+	private int blocksCount;
+	// total number of blocks
+	private int maxBlocksCount;
+
+	private Case process = null;
+	private int workerNum;
 
 	/**
 	 * {@inheritDoc}
@@ -43,42 +53,54 @@ public final class WordCountMaster extends Behavior {
 		}
 
 		// Initialize
-		int workerNum = (int) v[0];
+		this.workerNum = (int) v[0];
 		String inputPath = (String) v[1];
 		String outputPath = (String) v[2];
-
-		Reference[] workers = new Reference[workerNum];
-		for (int i = 0; i < workerNum; i++) {
+		FileHandler fh = new FileHandler(inputPath, outputPath);
+		Reference[] workers = new Reference[this.workerNum];
+		for (int i = 0; i < this.workerNum; i++) {
 			workers[i] = actor(new WordCountWorker());
 		}
-		int currentWorkerIdx = 0;
-		this.responseCount = 0;
+
 		// determine how many blocks needed
-		// TODO
+		blocksCount = fh.countBlocks();
+		maxBlocksCount = blocksCount;
 
 		// set case
-		Case process = (m) -> {
+		process = (m) -> {
 			System.out.println("risposta da " + m.getSender().getName() + ": " + m.getContent());
 			this.responseCount++;
 
-			if (responseCount == workerNum) {
-				// stop application
-				for (int i = 0; i < workerNum; i++) {
-					send(workers[i], Kill.KILL);
+			if (blocksCount > 0) {
+				blocksCount--;
+				System.out.println("ask to workers[" + m.getSender().getName() + "]");
+				future(m, getMapFunction(), process);
+			} else {
+				if (responseCount == this.maxBlocksCount) {
+					// stop application
+					for (int i = 0; i < this.workerNum; i++) {
+						send(workers[i], Kill.KILL);
+					}
+
+					return Shutdown.INSTANCE;
 				}
-
-				return Shutdown.INSTANCE;
-			}else{
-				return null;
 			}
-
+			return null;
 		};
 
 		// first call to workers
-		for (int i = 0; i < workerNum; i++) {
-			future(workers[i], new Map(), process);
+		while (currentWorkerIdx < this.workerNum && blocksCount > 0){
+//			if (this.currentWorkerIdx >= this.workerNum)
+//				this.currentWorkerIdx = 0;
+			blocksCount--;
+			System.out.println("ask to workers[" + this.currentWorkerIdx + "]");
+			future(workers[this.currentWorkerIdx++], getMapFunction(), process);
 		}
 
+	}
+
+	private Map getMapFunction() {
+		return new Map();
 	}
 
 	private boolean checkInputValidity(Object[] v) {
