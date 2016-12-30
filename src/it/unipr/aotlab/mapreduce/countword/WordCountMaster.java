@@ -4,8 +4,16 @@ import it.unipr.aotlab.actodes.actor.Behavior;
 import it.unipr.aotlab.actodes.actor.Binder;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
 
+/**
+ * 
+ * @author Omi087
+ *
+ */
 public final class WordCountMaster extends Behavior {
 
+	/**
+	 * 
+	 */
 	@Override
 	public void initialize(Binder b, Object[] v) {
 		if (!checkInputValidity(v)) {
@@ -13,11 +21,14 @@ public final class WordCountMaster extends Behavior {
 			return;
 		}
 
-		if (((int) v[0] > 0) && ((int) v[1] > 0)) {
-			int n_workers = (int) v[0];
-		}
+		extractInputData();
+		int n_workers = (int) v[0];
 	}
 
+	private void extractInputData() {
+		// TODO Auto-generated method stub	
+	}
+	
 	private boolean checkInputValidity(Object[] v) {
 		try {
 			if (v.length != 4)
