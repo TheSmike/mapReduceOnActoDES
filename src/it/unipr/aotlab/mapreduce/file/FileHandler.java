@@ -10,9 +10,14 @@ public class FileHandler {
 	 * Count number of blocks in file/directory
 	 * @return
 	 */
-	public int countBlocks() {
+	public int countMapBlocks() {
 		// TODO Auto-generated method stub
 		return 5;
+	}
+
+	public int countReduceBlocks() {
+		// TODO Auto-generated method stub
+		return 7;
 	}
 
 }
