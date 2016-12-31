@@ -33,7 +33,9 @@ public final class WordCountMaster extends Behavior {
 	// Reduce blocks number to decrement
 	private int reduceBlocksCount;
 	// total number of blocks
-	private int maxBlocksCount;
+	private int maxMapBlocksCount;
+	// total number of reduce blocks
+	private int maxReduceBlocksCount;
 
 	private Case process = null;
 	private int workerNum;
@@ -67,7 +69,7 @@ public final class WordCountMaster extends Behavior {
 
 		// determine how many blocks needed
 		mapBlocksCount = fh.countMapBlocks();
-		maxBlocksCount = mapBlocksCount;
+		maxMapBlocksCount = mapBlocksCount;
 
 		/******** Response case ********/
 		process = (m) -> {
@@ -79,10 +81,10 @@ public final class WordCountMaster extends Behavior {
 				mapBlocksCount--;
 				System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
 				future(m, getMapFunction(), process);
-			} else if (this.responseCount == this.maxBlocksCount) {
-				// All workers have ended Map fucntion, start with Reduce
-				// function
+			} else if (this.responseCount == this.maxMapBlocksCount) {
+				// All workers have ended Map fucntion, start with Reduce function
 				this.reduceBlocksCount = fh.countReduceBlocks();
+				this.maxReduceBlocksCount = this.reduceBlocksCount;
 				currentWorkerIdx = 0;
 				// first call to workers
 				while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
@@ -95,7 +97,7 @@ public final class WordCountMaster extends Behavior {
 				reduceBlocksCount--;
 				System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
 				future(m, getReduceFunction(), process);
-			} else if (responseCount == this.maxBlocksCount + this.workerNum) {
+			} else if (responseCount == this.maxMapBlocksCount + this.maxReduceBlocksCount) {
 				// stop application
 				for (int i = 0; i < this.workerNum; i++) {
 					send(workers[i], Kill.KILL);
