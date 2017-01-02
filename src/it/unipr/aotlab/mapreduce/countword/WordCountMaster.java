@@ -33,7 +33,7 @@ public final class WordCountMaster extends Behavior {
 	// Reduce blocks number to decrement
 	private int reduceBlocksCount;
 	// total number of blocks
-	private int maxMapBlocksCount;
+	private int maxMapBlocks;
 	// total number of reduce blocks
 	private int maxReduceBlocksCount;
 
@@ -61,27 +61,27 @@ public final class WordCountMaster extends Behavior {
 		this.workerNum = (int) v[0];
 		String inputPath = (String) v[1];
 		String outputPath = (String) v[2];
-		FileHandler fh = new FileHandler(inputPath, outputPath);
+		int blockSize = (int) v[3];
+		FileHandler fh = new FileHandler(inputPath, outputPath, blockSize);
 		Reference[] workers = new Reference[this.workerNum];
 		for (int i = 0; i < this.workerNum; i++) {
 			workers[i] = actor(new WordCountWorker());
 		}
 
 		// determine how many blocks needed
-		mapBlocksCount = fh.countMapBlocks();
-		maxMapBlocksCount = mapBlocksCount;
+		mapBlocksCount = 0;
+		maxMapBlocks = fh.countMapBlocks();
 
 		/******** Response case ********/
 		process = (m) -> {
 			System.out.println("risposta da " + m.getSender().getName() + ": " + m.getContent());
 			this.responseCount++;
 
-			if (mapBlocksCount > 0) {
+			if (mapBlocksCount < maxMapBlocks) {
 				// assign another block to this worker
-				mapBlocksCount--;
 				System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
-				future(m, getMapFunction(), process);
-			} else if (this.responseCount == this.maxMapBlocksCount) {
+				future(m, getMapFunction(fh, mapBlocksCount++), process);
+			} else if (this.responseCount == this.maxMapBlocks) {
 				// All workers have ended Map fucntion, start with Reduce function
 				this.reduceBlocksCount = fh.countReduceBlocks();
 				this.maxReduceBlocksCount = this.reduceBlocksCount;
@@ -97,7 +97,7 @@ public final class WordCountMaster extends Behavior {
 				reduceBlocksCount--;
 				System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
 				future(m, getReduceFunction(), process);
-			} else if (responseCount == this.maxMapBlocksCount + this.maxReduceBlocksCount) {
+			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
 				// stop application
 				for (int i = 0; i < this.workerNum; i++) {
 					send(workers[i], Kill.KILL);
@@ -110,10 +110,10 @@ public final class WordCountMaster extends Behavior {
 		/******** end case ********/
 
 		// first call to workers
-		while (currentWorkerIdx < this.workerNum && mapBlocksCount > 0) {
-			mapBlocksCount--;
+		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
+			
 			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
-			future(workers[this.currentWorkerIdx++], getMapFunction(), process);
+			future(workers[this.currentWorkerIdx++], getMapFunction(fh, mapBlocksCount++), process);
 		}
 
 	}
@@ -122,13 +122,13 @@ public final class WordCountMaster extends Behavior {
 		return new Reduce();
 	}
 
-	private Map getMapFunction() {
-		return new Map();
+	private Map getMapFunction(FileHandler fh, int mapBlock) {
+		return new Map(fh, mapBlock);
 	}
 
 	private boolean checkInputValidity(Object[] v) {
 		try {
-			if (v.length != 3)
+			if (v.length != 4)
 				throw new InitializeException("3 required parameters for the program");
 			if ((int) v[0] <= 0)
 				throw new InitializeException("You need to specify minimum of 1 worker");
@@ -136,6 +136,8 @@ public final class WordCountMaster extends Behavior {
 				throw new InitializeException("Input path is null");
 			if (StrUtils.isEmpty((String) v[2]))
 				throw new InitializeException("Output path is null");
+			if ((int) v[3] <= 0)
+				throw new InitializeException("blockSize is null");
 		} catch (InitializeException e) {
 			System.err.println(e.getMessage());
 			return false;

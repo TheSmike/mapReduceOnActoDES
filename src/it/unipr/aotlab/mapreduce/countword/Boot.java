@@ -11,10 +11,11 @@ public class Boot {
 
 	public static void main(String[] args) {
 		final int workers = 3;	
+		final int blockSize = 1024;
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());
 		c.setCreator(WordCountMaster.class.getName());
-		c.setArguments(workers, "inputPath", "outputPath");
+		c.setArguments(workers, "inputPath", "outputPath", blockSize);
 		c.setFilter(Logger.ALLLOGS);
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();
