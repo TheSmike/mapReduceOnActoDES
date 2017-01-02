@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class AlgoFile {
 	public static void main(String [] args) throws FileNotFoundException, IOException {
 
-	BufferedReader reader = new BufferedReader(new FileReader("C:/Users/Vittorio/Desktop/file_parole.txt"));
+	BufferedReader reader = new BufferedReader(new FileReader("resources/file_parole.txt"));
 	
 	String line = reader.readLine();
 	
@@ -75,7 +75,7 @@ public class AlgoFile {
 		File file;
 		
 		
-		file = new File("/c:/Users/Vittorio/Desktop/coppie_chiave_valore.txt");
+		file = new File("resources/coppie_chiave_valore.txt");
 		
 		
 		FileWriter fw = new FileWriter(file);
