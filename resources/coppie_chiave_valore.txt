@@ -1,4 +1,4 @@
-cane 4
+gatto 5
 gatto 5
 iguana 6
 gatto 5
