@@ -45,7 +45,7 @@ public final class Worker extends KillableBehavior {
 		this.mapCase = (m) -> {
 			Map map = (Map) m.getContent();
 			try {
-				map.execute();
+				map.executeBlock();
 			} catch (Exception e) {
 				System.err.println("error executing Map function: " + e.getMessage());
 				e.printStackTrace();

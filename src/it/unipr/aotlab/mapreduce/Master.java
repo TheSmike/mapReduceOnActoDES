@@ -8,11 +8,11 @@ import it.unipr.aotlab.actodes.interaction.Kill;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
-import it.unipr.aotlab.mapreduce.countword.WordCountWorker;
+import it.unipr.aotlab.mapreduce.context.DefaultMapContext;
+import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
 import it.unipr.aotlab.mapreduce.file.FileHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
-import stub.WaitAndEchoMap;
 
 /**
  * The {@code Initiator1} class defines a behavior that creates an
@@ -41,6 +41,9 @@ public final class Master extends Behavior {
 
 	private Case process = null;
 	private int workerNum;
+	private MapJob mapJob;
+	
+	private final DefaultMapContext context = new DefaultMapContext();
 
 	/**
 	 * {@inheritDoc}
@@ -64,6 +67,7 @@ public final class Master extends Behavior {
 		String inputPath = (String) v[1];
 		String outputPath = (String) v[2];
 		int blockSize = (int) v[3];
+		this.mapJob = (MapJob) v[4];
 		FileHandler fh = new FileHandler(inputPath, outputPath, blockSize);
 		// determine how many blocks needed
 		mapBlocksCount = 0;
@@ -130,13 +134,13 @@ public final class Master extends Behavior {
 	}
 
 	private Map getMapFunction(FileHandler fh, int mapBlock) {
-		return new WaitAndEchoMap(fh, mapBlock);
+		return new Map(fh, mapBlock, this.mapJob, this.context);
 	}
 
 	private boolean checkInputValidity(Object[] v) {
 		try {
-			if (v.length != 4)
-				throw new InitializeException("3 required parameters for the program");
+			if (v.length != 5)
+				throw new InitializeException("5 required parameters for the program");
 			if ((int) v[0] <= 0)
 				throw new InitializeException("You need to specify minimum of 1 worker");
 			if (StrUtils.isEmpty((String) v[1]))
@@ -145,6 +149,8 @@ public final class Master extends Behavior {
 				throw new InitializeException("Output path is null");
 			if ((int) v[3] <= 0)
 				throw new InitializeException("blockSize is null");
+			if (v[4] == null && !(v[4] instanceof MapJob))
+				throw new InitializeException("expected 5th parameter as MapJob");
 		} catch (InitializeException e) {
 			System.err.println(e.getMessage());
 			return false;
