@@ -1,237 +1,156 @@
 package it.unipr.aotlab.mapreduce;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-
 import it.unipr.aotlab.actodes.actor.Behavior;
 import it.unipr.aotlab.actodes.actor.Binder;
 import it.unipr.aotlab.actodes.actor.Case;
 import it.unipr.aotlab.actodes.actor.Reference;
-import it.unipr.aotlab.actodes.configuration.Configuration;
-import it.unipr.aotlab.actodes.examples.buffer.EmptyBuffer;
 import it.unipr.aotlab.actodes.interaction.Kill;
-import it.unipr.aotlab.actodes.logging.ConsoleWriter;
-import it.unipr.aotlab.actodes.logging.Logger;
-import it.unipr.aotlab.actodes.logging.TextualFormatter;
-import it.unipr.aotlab.actodes.runtime.Controller;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
-import it.unipr.aotlab.actodes.runtime.passive.OldScheduler;
+import it.unipr.aotlab.mapreduce.action.Map;
+import it.unipr.aotlab.mapreduce.action.Reduce;
+import it.unipr.aotlab.mapreduce.countword.WordCountWorker;
+import it.unipr.aotlab.mapreduce.exception.InitializeException;
+import it.unipr.aotlab.mapreduce.file.FileHandler;
+import it.unipr.aotlab.mapreduce.utils.StrUtils;
+import stub.WaitAndEchoMap;
 
 /**
- *
  * The {@code Initiator1} class defines a behavior that creates an
  * {@code EmptyBuffer} actor and a set of (a {@code Producer} and a
  * {@code Consumer}) actors.
  *
  * After a fixed period of time it asks them to kill themselves.
  *
- * @see EmptyBuffer
- * @see Producer
- * @see Consumer
+ * @author Omi087
  *
- **/
-
+ */
 public final class Master extends Behavior {
-	private static final long serialVersionUID = 1L;
 
-	private static final String FS = "La stringa %s ha %n caratteri!\n";
-	private String stringa;
-	private int conta_caratteri;
-	// private int elements;
-	// private int messages;
-	// private int attempts;
-	// private int sent;
-	// private Reference[] references;
-	// private Reference current;
-	// private final Random random;
-	private int n_strings;
-	private int n_workers;
-	private String[] array_di_stringhe;
-	private Queue<String> stringhe;
-	private final Random random;
-	private int sent;
-	private int attempts;
-	private int totale;
-	private int risposte;
-	private Reference[] references;
-	private Reference current;
+	// Current number of response.
+	private int responseCount;
+	// index of last invoked worker
+	private int currentWorkerIdx = 0;
+	// Map blocks number to decrement
+	private int mapBlocksCount;
+	// Reduce blocks number to decrement
+	private int reduceBlocksCount;
+	// total number of blocks
+	private int maxMapBlocks;
+	// total number of reduce blocks
+	private int maxReduceBlocksCount;
 
-	// Alive processing case.
-	private Case process;
+	private Case process = null;
+	private int workerNum;
 
 	/**
-	 * Class constructor.
+	 * {@inheritDoc}
+	 *
+	 * @param v
+	 *            the arguments:
+	 *
+	 *            the number of workers, input path, output path, TODO map
+	 *            function, TODO reduce function.
 	 *
 	 **/
-
-	public Master() {
-
-		this.n_strings = 0;
-		this.n_workers = 0;
-		this.array_di_stringhe = new String[n_strings];
-
-		this.sent = 0;
-		this.attempts = 0;
-		this.conta_caratteri = 0;
-
-		this.random = new Random();
-
-		this.references = null;
-		this.current = null;
-
-	}
-
 	@Override
-	public void initialize(final Binder b, final Object[] v) {
-		if (((int) v[0] > 0) && ((int) v[1] > 0)) {
-			// HashSet<Reference> consumers = new HashSet<>();
-			// HashSet<Reference> producers = new HashSet<>();
-			this.n_strings = (int) v[1];
-			this.n_workers = (int) v[0];
+	public void initialize(Binder b, Object[] v) {
+		if (!checkInputValidity(v)) {
+			System.err.println("Fine programma");
+			return;
+		}
 
-			// setTimeout((long) v[0]); //definisco un timeout attraverso al
-			// behaviour associato all'attore
+		// Initialize
+		this.workerNum = (int) v[0];
+		String inputPath = (String) v[1];
+		String outputPath = (String) v[2];
+		int blockSize = (int) v[3];
+		FileHandler fh = new FileHandler(inputPath, outputPath, blockSize);
+		// determine how many blocks needed
+		mapBlocksCount = 0;
+		maxMapBlocks = fh.countMapBlocks();
+		if (maxMapBlocks == 0) {
+			System.out.println("Nessun file da elaborare");
+			return;
+		}
+		//Initialize Worker
+		Reference[] workers = new Reference[this.workerNum];
+		for (int i = 0; i < this.workerNum; i++) {
+			workers[i] = actor(new Worker());
+		}
 
-			// Reference buffer = actor(new EmptyBuffer(), (int) v[1]);
-			HashSet<Reference> referenze = new HashSet<>();
-			this.references = new Reference[this.n_workers];
-			this.array_di_stringhe = new String[n_strings];
-			this.stringhe = new LinkedList<>();
+		/******** Response case ********/
+		process = (m) -> {
+			System.out.println("risposta da " + m.getSender().getName() + ": " + m.getContent());
+			this.responseCount++;
 
-			for (int i = 0; i < this.n_workers; i++) {
-				//referenze.add(actor(new Worker()));
-				this.references[i] = actor(new Worker());
+			if (mapBlocksCount < maxMapBlocks) {
+				// assign another block to this worker
+				System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
+				future(m, getMapFunction(fh, mapBlocksCount++), process);
+			} else if (this.responseCount == this.maxMapBlocks) {
+				// All workers have ended Map fucntion, start with Reduce
+				// function
+				this.reduceBlocksCount = fh.countReduceBlocks();
+				this.maxReduceBlocksCount = this.reduceBlocksCount;
+				currentWorkerIdx = 0;
+				// first call to workers
+				while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
+					reduceBlocksCount--;
+					System.out.println("ask to workers[" + this.currentWorkerIdx + "] to reduce");
+					future(workers[this.currentWorkerIdx++], getReduceFunction(), process);
+				}
+			} else if (reduceBlocksCount > 0) {
+				// assign another block to reduce to this worker
+				reduceBlocksCount--;
+				System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
+				future(m, getReduceFunction(), process);
+			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
+				// stop application
+				for (int i = 0; i < this.workerNum; i++) {
+					send(workers[i], Kill.KILL);
+				}
+				return Shutdown.INSTANCE;
 			}
 
-			for (int i = 0; i < this.n_strings; i++) {
-				String spazio = " ";
+			return null;
+		};
+		/******** end case ********/
 
-				for (int j = 0; j < i; j++) {
+		// first call to workers
+		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
 
-					spazio += spazio;
-
-				}
-				array_di_stringhe[i] = "ciao" + spazio;
-				stringhe.add(array_di_stringhe[i]);
-
-			}
-
-			// this.stringa =
-			// this.array_di_stringhe[this.random.nextInt(this.n_strings)];
-			// this.conta_caratteri = this.stringa.length();
-
-			this.current = this.references[this.random.nextInt(this.n_workers)];
-
-			totale = 0;
-			risposte = 0;
-
-			this.process = (m) -> {
-				
-				System.out.println("risposta da " + m.getSender().getName() + ": " + m.getContent());
-				totale += (int) m.getContent();
-				risposte++;
-				
-
-				// future(this.current, message , this.process);
-				if (!stringhe.isEmpty())
-				{
-					String messaggio = stringhe.remove();
-					future(m,messaggio, this.process);
-					
-					
-				}
-				else if(stringhe.isEmpty() && (risposte == n_strings)  )
-				{
-					System.out.print("totale contatore stringhe: "+totale+"\n");
-					
-
-			        for (int i = 0; i < n_workers; i++)
-			        {
-			        	Reference kill_worker = this.current = this.references[i];
-			        	send(kill_worker, Kill.KILL);
-			        }
-
-			        //send(buffer, Kill.KILL);
-
-			        return Shutdown.INSTANCE;
-				}
-				
-					
-					
-
-				return null;
-			};
-
-			int i;
-			for (i = 0; i < Math.min(this.n_strings, this.n_workers); i++) {
-
-				String message = this.stringa = array_di_stringhe[i];
-
-				String messaggio = stringhe.remove();
-
-				this.current = this.references[i];
-
-				// future(this.current, message , this.process);
-				future(this.current, messaggio, this.process);
-
-			}
-
-			/*
-			 * this.process = (m) -> { this.sent++; if (this.sent <
-			 * this.n_strings) { future(this.current, Alive.ALIVE,
-			 * this.process); //this.conta_caratteri = this.stringa.length();
-			 * //System.out.format( // FS, this.stringa, this.conta_caratteri);
-			 * //System.out.println("ciao");
-			 * 
-			 * } else if (this.attempts < this.n_workers) { this.attempts++;
-			 * 
-			 * this.sent = 0;
-			 * 
-			 * this.current =
-			 * this.references[this.random.nextInt(this.n_workers)];
-			 * 
-			 * future(this.current, Alive.ALIVE, this.process); } else {
-			 * send(GBROADCAST, Kill.KILL);
-			 * 
-			 * return Shutdown.INSTANCE; }
-			 * 
-			 * return null; };
-			 * 
-			 * future(this.current, Alive.ALIVE, this.process);
-			 * 
-			 */
-
+			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
+			future(workers[this.currentWorkerIdx++], getMapFunction(fh, mapBlocksCount++), process);
 		}
 
 	}
 
-	/**
-	 * Starts an actor space running the buffer example.
-	 *
-	 * @param v
-	 *            the arguments.
-	 *
-	 *            It does not need arguments.
-	 *
-	 **/
-	public static void main(final String[] v) {
-		final int workers = 3;
-		final int stringhe = 5;
-
-		Configuration c = Controller.INSTANCE.getConfiguration();
-
-		c.setScheduler(OldScheduler.class.getName());
-
-		c.setCreator(Master.class.getName());
-		c.setArguments(workers, stringhe);
-
-		c.setFilter(Logger.ALLLOGS);
-
-		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
-
-		Controller.INSTANCE.run();
-
+	private Reduce getReduceFunction() {
+		return new Reduce();
 	}
+
+	private Map getMapFunction(FileHandler fh, int mapBlock) {
+		return new WaitAndEchoMap(fh, mapBlock);
+	}
+
+	private boolean checkInputValidity(Object[] v) {
+		try {
+			if (v.length != 4)
+				throw new InitializeException("3 required parameters for the program");
+			if ((int) v[0] <= 0)
+				throw new InitializeException("You need to specify minimum of 1 worker");
+			if (StrUtils.isEmpty((String) v[1]))
+				throw new InitializeException("Input path is null");
+			if (StrUtils.isEmpty((String) v[2]))
+				throw new InitializeException("Output path is null");
+			if ((int) v[3] <= 0)
+				throw new InitializeException("blockSize is null");
+		} catch (InitializeException e) {
+			System.err.println(e.getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
 }

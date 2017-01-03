@@ -11,6 +11,7 @@ import it.unipr.aotlab.mapreduce.action.Reduce;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
 import it.unipr.aotlab.mapreduce.file.FileHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
+import stub.WaitAndEchoMap;
 
 /**
  * The {@code Initiator1} class defines a behavior that creates an
@@ -123,7 +124,7 @@ public final class WordCountMaster extends Behavior {
 	}
 
 	private Map getMapFunction(FileHandler fh, int mapBlock) {
-		return new Map(fh, mapBlock);
+		return new WaitAndEchoMap(fh, mapBlock);
 	}
 
 	private boolean checkInputValidity(Object[] v) {

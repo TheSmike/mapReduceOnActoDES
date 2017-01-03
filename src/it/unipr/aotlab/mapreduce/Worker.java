@@ -4,44 +4,73 @@ import it.unipr.aotlab.actodes.actor.Binder;
 import it.unipr.aotlab.actodes.actor.Case;
 import it.unipr.aotlab.actodes.actor.KillableBehavior;
 import it.unipr.aotlab.actodes.filtering.MessagePattern;
+import it.unipr.aotlab.actodes.filtering.constraint.IsInstance;
+import it.unipr.aotlab.actodes.interaction.Done;
+import it.unipr.aotlab.mapreduce.action.Map;
+import it.unipr.aotlab.mapreduce.action.Reduce;
 
 /**
  *
- * The {@code QWorkerer} class defines a behavior that waits for messages
- * from a {@code Master} actor until it receives a {@code KILL} message.
+ * The {@code QWorkerer} class defines a behavior that waits for messages from a
+ * {@code Master} actor until it receives a {@code KILL} message.
  *
  * When it happens it kills itself.
  *
  * @see Master
  *
-**/
+ **/
 
-public final class Worker extends KillableBehavior
-{
-  private static final long serialVersionUID = 1L;
+public final class Worker extends KillableBehavior {
+	
+	private static final long serialVersionUID = 1L;
+	private static final MessagePattern MAPPATTERN = MessagePattern.contentPattern(new IsInstance(Map.class));
+	private static final MessagePattern REDUCEPATTERN = MessagePattern.contentPattern(new IsInstance(Reduce.class));
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param v  the arguments:
-   *
-   * the number of messages.
-   *
-  **/
-  @Override
-  public void initialize(final Binder b, final Object[] v)
-  {
-    b.bind(KILLPATTERN, this.killCase);
+	// Map function case.
+	private Case mapCase;
+	// Reduce function case.
+	private Case reduceCase;
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param v
+	 *            the arguments:
+	 *
+	 *            the number of messages.
+	 *
+	 **/
+	@Override
+	public void initialize(final Binder b, final Object[] v) {
+		this.mapCase = (m) -> {
+			Map map = (Map) m.getContent();
+			try {
+				map.execute();
+			} catch (Exception e) {
+				System.err.println("error executing Map function: " + e.getMessage());
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			System.out.println(this.getReference().getName() + " executed map function");
+			send(m, Done.DONE);
+			return null;
+		};
 
-    Case c = (m) -> {
-      send(m, ((String) m.getContent()).length());
-
-      return null;
-    };
-
-    b.bind(MessagePattern.NOCONSTRAINTS, c);
-  }
+		// risposta nel caso di reduceCase
+		this.reduceCase = (m) -> {
+			//TODO replace with true reduce
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println(this.getReference().getName() + " executed reduce function");
+			send(m, Done.DONE);
+			return null;
+		};
+		
+		b.bind(KILLPATTERN, this.killCase);
+		b.bind(MAPPATTERN, this.mapCase);
+		b.bind(REDUCEPATTERN, this.reduceCase);
+	}
 }
-
-
-

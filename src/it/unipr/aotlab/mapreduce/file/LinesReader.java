@@ -1,53 +1,47 @@
 package it.unipr.aotlab.mapreduce.file;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
-public class LinesReader {
+public class LinesReader implements AutoCloseable {
 
-	// private String inputPath;
-	// private int mapBlock;
-	private int blockSize;
-	private int readedByte; 
-	private RandomAccessFile raf;
+	// private int blockSize;
+	private File fileToRead;
+	private BufferedReader reader;
 
-	public LinesReader(String inputPath, int mapBlock, int blockSize) {
-		// this.inputPath = inputPath;
-		// this.mapBlock = mapBlock;
-		this.readedByte = 0;
-		this.blockSize = blockSize;
-
-		this.raf = null;
+	public LinesReader(File file, int blockSize) {
+		this.fileToRead = file;
+		reader = null;
 		try {
-			raf = new RandomAccessFile(new File(inputPath), "r");
-			raf.seek(mapBlock * blockSize);
-		} catch (Exception e) {
+			reader = new BufferedReader(new FileReader(fileToRead));
+		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+
+		// this.blockSize = blockSize;
 	}
 
 	public String readLine() {
 		try {
-//			byte read;
-//			while ( (read = raf.readL()) )
-			return raf.readLine();
+			return reader.readLine();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	@Override
 	public void close() {
-		if (raf != null)
+		if (reader != null)
 			try {
-				raf.close();
+				reader.close();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 	}
 
-	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// public boolean hasNext() {
+	// }
 }
