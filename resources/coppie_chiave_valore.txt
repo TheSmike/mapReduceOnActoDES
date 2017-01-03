@@ -6,7 +6,7 @@ iguana 6
 ratto 5
 giraffa 7
 cane 4
-iguana 6
+giraffa 7
 elefante 8
 cane 4
 gatto 5

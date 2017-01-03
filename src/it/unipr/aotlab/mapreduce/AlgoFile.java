@@ -8,8 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
@@ -25,7 +29,6 @@ public class AlgoFile {
 	String line = reader.readLine();
 	
 	ArrayList<String> righe = new ArrayList<String> ();
-	//String[] collection = new String[10];
 	
 	
 	
@@ -33,10 +36,10 @@ public class AlgoFile {
 	     System.out.println(line);
 	     righe.add(line);
 	     line = reader.readLine();
-	     //righe.add(line);
+	     
 	}
 	     
-	//TreeMap
+	
 	reader.close();
 	
 	System.out.println("Stampo il contenuto della lista \n");
@@ -44,7 +47,7 @@ public class AlgoFile {
 	//ogni riga la divido con split in 3 elementi che aggiunto ad un nuovo arraylist
 	String parole[] = new String[3];
 	ArrayList<String> parole2 = new ArrayList<String> ();
-	//ArrayList<String> tmp = new ArrayList <String> ();
+	
 	
 	
 	
@@ -53,9 +56,7 @@ public class AlgoFile {
 	
 	for(String s : righe)
 	{
-		//System.out.println(s);
-		//int spacePos = s.indexOf(" ");
-		//System.out.println(spacePos);
+		
 		ArrayList<String> tmp = new ArrayList <String> ();
 		
 		parole = s.split(" ");
@@ -67,25 +68,19 @@ public class AlgoFile {
 		}
 		file_parole.add(tmp);
 		
-		//System.out.println(parole2);
-		//System.out.println(file_parole);
+
 		
 	}
 	
-	/*
-	for(String w : parole2)
-	{
-		
-		System.out.println("Parola :"+w+", con "+w.length()+" caratteri \n");
-		
-		
-	}
-	*/
+	
 	stampa_su_file(parole2);
 	
-	 TreeMap<String, Integer> parola_occorrenze = new TreeMap<String,Integer>();
+	 TreeMap<String, List<Integer>> big_container = new TreeMap <String,List<Integer>>();
+	 //TreeMap<String, Integer> parola_occorrenze = new TreeMap<String,Integer>();
+	 List<String> parole_list = new ArrayList<String>();
+	 List<Integer> valori = new ArrayList<Integer> ();
 	
-	//ArrayList <ArrayList <String>> file_parole = new ArrayList<ArrayList<String>> ();
+	
 	int i;
 	for(ArrayList<String> riga_testo : file_parole)
 	{
@@ -96,13 +91,21 @@ public class AlgoFile {
 			int contatore = 0;
 			for(int ii = 0; ii < riga_testo.size(); ii++)
 			{
-			//System.out.println(single_parola);
+			
 				
 				if(riga_testo.get(ii).equals(elem)) contatore++;
 			}
-			System.out.println("Ho trovato nella riga corrente la parola "+elem+" "+contatore+" volte \n");
-			//System.out.println("parola:"+single_parola+"contatore:"+contatore);
-			parola_occorrenze.put(single_parola, contatore);
+			//System.out.println("Ho trovato nella riga corrente la parola "+elem+" "+contatore+" volte \n");
+			
+			parole_list.add(elem);
+			valori.add(contatore);
+			//parola_occorrenze.put(single_parola, contatore);
+			
+			//big_container.put(single_parola, contatore);
+			
+			//Integer elem2 = parola_occorrenze.get(single_parola);
+			
+			//System.out.println(parola_occorrenze+"\n");
 			//System.out.println("Parola :"+w+", con "+w.length()+" caratteri \n");
 			//String elem = riga_testo.get(i);
 			//if(riga_testo.contains(elem))
@@ -113,13 +116,54 @@ public class AlgoFile {
 		}
 	}
 	
-	Set<Entry<String, Integer>> set = parola_occorrenze.entrySet();
-    Iterator<Entry<String, Integer>> iterator = set.iterator();
-    while(iterator.hasNext()) {
-       Entry<String, Integer> mentry = iterator.next();
-       System.out.print("key is: "+ mentry.getKey() + " & Value is: ");
-       System.out.println(mentry.getValue());
-    }
+	System.out.println(parole_list+"\n");
+	System.out.println(valori+"\n");
+	
+	
+	
+	
+	for(int ww = 0; ww < parole_list.size(); ww++)
+	{
+	boolean trovato = false;
+	String elem = parole_list.get(ww);
+	
+	
+		
+	if(big_container.containsKey(elem)) trovato = true;
+	
+	
+	if(trovato == false)
+	{
+		
+	List<Integer> indici = new ArrayList<Integer>();
+	
+		for(int kk = 0; kk < parole_list.size(); kk++)
+		{
+			if(parole_list.get(kk).equals(elem)) indici.add(kk);
+				
+		
+		}
+		
+	List <Integer> tmp = new ArrayList<Integer>();
+	
+	
+	for(int ii = 0; ii < indici.size(); ii++)
+	{
+	
+	int indice = indici.get(ii);
+	tmp.add(valori.get(indice));
+	
+	}
+	
+	big_container.put(elem,tmp);
+	
+	
+	}
+		
+	}
+	
+	System.out.println(big_container+"\n");
+
 	
 }
 
