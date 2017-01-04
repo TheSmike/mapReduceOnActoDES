@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 
-public class CountwordMap implements MapJob {
+public class CountWordMap implements MapJob {
 
 	@Override
 	public void execute(String line, Context context) throws Exception {

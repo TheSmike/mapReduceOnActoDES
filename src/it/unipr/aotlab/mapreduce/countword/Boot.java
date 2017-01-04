@@ -19,7 +19,7 @@ public class Boot {
 		final int blockSize = 1024;
 		final String inputPath = "resources/CountWord";
 		final String outputPath = "resources/output/";
-		final MapJob mapJob = new CountwordMap();
+		final MapJob mapJob = new CountWordMap();
 		final ReduceJob reduceJob = new WaitAndEchoReduceJob();
 
 		Configuration c = Controller.INSTANCE.getConfiguration();
