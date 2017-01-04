@@ -13,8 +13,15 @@ public class DefaultMapContext implements Context {
 	}
 	
 	@Override
+	public void putAll(Map map) {
+		map.putAll(map);
+	}
+	
+	@Override
 	public String toString() {
 		return map.toString();
 	}
+
+
 
 }
