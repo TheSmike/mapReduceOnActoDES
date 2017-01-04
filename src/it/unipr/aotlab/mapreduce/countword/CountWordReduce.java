@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unipr.aotlab.mapreduce.context.Context;
-import it.unipr.aotlab.mapreduce.context.DefaultMapContext;
+import it.unipr.aotlab.mapreduce.context.MapContext;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
-public class CountwordReduce implements ReduceJob {
+public class CountWordReduce implements ReduceJob {
 
 	@Override
 	public void execute(String key, List<String> values, Context context) throws Exception {
@@ -27,7 +27,7 @@ public class CountwordReduce implements ReduceJob {
 	
 	public static void main(String[] args) throws Exception
 	{
-		CountwordReduce reduce = new CountwordReduce();
+		CountWordReduce reduce = new CountWordReduce();
 		
 		List <Integer> numeri = new ArrayList <Integer>();
 		
@@ -42,7 +42,7 @@ public class CountwordReduce implements ReduceJob {
 				for (Integer myInt : oldList) { 
 				  newList.add(String.valueOf(myInt)); 
 				}
-	Context contesto = new DefaultMapContext();
+	Context contesto = new MapContext();
 	
 	reduce.execute("gatto",newList,contesto);
 		

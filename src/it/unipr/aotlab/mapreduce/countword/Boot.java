@@ -19,7 +19,7 @@ public class Boot {
 		final String inputPath = "resources/CountWord/";
 		final String outputPath = "resources/CountWordoutput/";
 		final MapJob mapJob = new CountWordMap();
-		final ReduceJob reduceJob = new CountwordReduce();
+		final ReduceJob reduceJob = new CountWordReduce();
 
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());
