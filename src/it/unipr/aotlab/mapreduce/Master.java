@@ -3,6 +3,7 @@ package it.unipr.aotlab.mapreduce;
 import it.unipr.aotlab.actodes.actor.Behavior;
 import it.unipr.aotlab.actodes.actor.Binder;
 import it.unipr.aotlab.actodes.actor.Case;
+import it.unipr.aotlab.actodes.actor.Message;
 import it.unipr.aotlab.actodes.actor.Reference;
 import it.unipr.aotlab.actodes.interaction.Kill;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
@@ -10,8 +11,10 @@ import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
 import it.unipr.aotlab.mapreduce.context.DefaultMapContext;
 import it.unipr.aotlab.mapreduce.context.MapJob;
+import it.unipr.aotlab.mapreduce.context.Context;
+import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
-import it.unipr.aotlab.mapreduce.file.FileHandler;
+import it.unipr.aotlab.mapreduce.file.ResourcesHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**
@@ -42,8 +45,9 @@ public final class Master extends Behavior {
 	private Case process = null;
 	private int workerNum;
 	private MapJob mapJob;
+	private ReduceJob reduceJob;
 	
-	private final DefaultMapContext context = new DefaultMapContext();
+	private ResourcesHandler rh;
 
 	/**
 	 * {@inheritDoc}
@@ -68,10 +72,11 @@ public final class Master extends Behavior {
 		String outputPath = (String) v[2];
 		int blockSize = (int) v[3];
 		this.mapJob = (MapJob) v[4];
-		FileHandler fh = new FileHandler(inputPath, outputPath, blockSize);
+		this.reduceJob = (ReduceJob) v[5];
+		this.rh = new ResourcesHandler(inputPath, outputPath, blockSize);
 		// determine how many blocks needed
 		mapBlocksCount = 0;
-		maxMapBlocks = fh.countMapBlocks();
+		maxMapBlocks = rh.countMapBlocks();
 		if (maxMapBlocks == 0) {
 			System.out.println("Nessun file da elaborare");
 			return;
@@ -88,32 +93,14 @@ public final class Master extends Behavior {
 			this.responseCount++;
 
 			if (mapBlocksCount < maxMapBlocks) {
-				// assign another block to this worker
-				System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
-				future(m, getMapFunction(fh, mapBlocksCount++), process);
+				launchMapWorker(m);
 			} else if (this.responseCount == this.maxMapBlocks) {
-				// All workers have ended Map fucntion, start with Reduce
-				// function
-				this.reduceBlocksCount = fh.countReduceBlocks();
-				this.maxReduceBlocksCount = this.reduceBlocksCount;
-				currentWorkerIdx = 0;
-				// first call to workers
-				while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
-					reduceBlocksCount--;
-					System.out.println("ask to workers[" + this.currentWorkerIdx + "] to reduce");
-					future(workers[this.currentWorkerIdx++], getReduceFunction(), process);
-				}
+				sortMapResult();
+				launchAllReduceWorker(workers);
 			} else if (reduceBlocksCount > 0) {
-				// assign another block to reduce to this worker
-				reduceBlocksCount--;
-				System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
-				future(m, getReduceFunction(), process);
+				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
-				// stop application
-				for (int i = 0; i < this.workerNum; i++) {
-					send(workers[i], Kill.KILL);
-				}
-				return Shutdown.INSTANCE;
+				return stopApplication(workers);
 			}
 
 			return null;
@@ -124,23 +111,62 @@ public final class Master extends Behavior {
 		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
 
 			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
-			future(workers[this.currentWorkerIdx++], getMapFunction(fh, mapBlocksCount++), process);
+			future(workers[this.currentWorkerIdx++], getMapFunction(mapBlocksCount++), process);
 		}
 
 	}
 
-	private Reduce getReduceFunction() {
-		return new Reduce();
+	private void sortMapResult() {
+		System.out.println(rh.getMapContext());
+//		this.context.sort();
 	}
 
-	private Map getMapFunction(FileHandler fh, int mapBlock) {
-		return new Map(fh, mapBlock, this.mapJob, this.context);
+	private Behavior stopApplication(Reference[] workers) {
+		// stop application
+		for (int i = 0; i < this.workerNum; i++) {
+			send(workers[i], Kill.KILL);
+		}
+		return Shutdown.INSTANCE;
+	}
+
+	private void launchReduceWorker(Message m) {
+		// assign another block to reduce to this worker
+		reduceBlocksCount--;
+		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
+		future(m, getReduceFunction(0), process);
+	}
+
+	private void launchAllReduceWorker(Reference[] workers) {
+		// All workers have ended Map fucntion, start with Reduce function
+		this.reduceBlocksCount = rh.countReduceBlocks();
+		this.maxReduceBlocksCount = this.reduceBlocksCount;
+		currentWorkerIdx = 0;
+		// first call to workers
+		while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
+			reduceBlocksCount--;
+			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to reduce");
+			future(workers[this.currentWorkerIdx++], getReduceFunction(0), process);
+		}
+	}
+
+	private void launchMapWorker(Message m) {
+		// assign another block to this worker
+		System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
+		future(m, getMapFunction(mapBlocksCount++), process);
+	}
+
+	private Reduce getReduceFunction(int reduceBlock) {
+		return new Reduce(this.rh, reduceBlock, this.reduceJob);
+	}
+
+	private Map getMapFunction(int mapBlock) {
+		return new Map(this.rh, mapBlock, this.mapJob);
 	}
 
 	private boolean checkInputValidity(Object[] v) {
 		try {
-			if (v.length != 5)
-				throw new InitializeException("5 required parameters for the program");
+			if (v.length != 6)
+				throw new InitializeException("6 required parameters for the program");
 			if ((int) v[0] <= 0)
 				throw new InitializeException("You need to specify minimum of 1 worker");
 			if (StrUtils.isEmpty((String) v[1]))
@@ -151,6 +177,8 @@ public final class Master extends Behavior {
 				throw new InitializeException("blockSize is null");
 			if (v[4] == null && !(v[4] instanceof MapJob))
 				throw new InitializeException("expected 5th parameter as MapJob");
+			if (v[5] == null && !(v[5] instanceof ReduceJob))
+				throw new InitializeException("expected 6th parameter as ReduceJob");
 		} catch (InitializeException e) {
 			System.err.println(e.getMessage());
 			return false;

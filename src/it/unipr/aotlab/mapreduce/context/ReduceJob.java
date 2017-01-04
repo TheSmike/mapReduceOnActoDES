@@ -9,6 +9,6 @@ package it.unipr.aotlab.mapreduce.context;
  */
 public interface ReduceJob {
 
-	public void execute(String line, MapOutputContext context)  throws Exception;
+	public void execute(String line, Context context)  throws Exception;
 
 }

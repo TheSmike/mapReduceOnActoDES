@@ -4,35 +4,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileHandler {
+import it.unipr.aotlab.mapreduce.context.Context;
+import it.unipr.aotlab.mapreduce.context.DefaultMapContext;
+
+public class ResourcesHandler {
 
 	private String inputPath;
 	private String outputPath;
 	private int blockSize;
 	private List<File> inputFiles;
+	private final Context mapContext;
+	private Context sortedContext;
 
-	public FileHandler(String inputPath, String outputPath, int blockSize) {
+	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
 		this.inputPath = inputPath;
 		inputFiles = loadPaths();
 		this.outputPath = outputPath;
 		this.blockSize = blockSize;
-	}
-
-	private List<File> loadPaths() {
-		List<File> retValue = new ArrayList<>();
-		File f = new File(this.inputPath);
-		if (f.exists()) {
-			if (f.isFile())
-				retValue.add(f);
-			else{
-				File[] files = f.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					retValue.add(files[i]);
-				}
-			}
-		}
-		return retValue;
+		this.mapContext = new DefaultMapContext();
+		this.sortedContext = null;
 	}
 
 	/**
@@ -49,8 +40,8 @@ public class FileHandler {
 		return 7;
 	}
 
-	public LinesReader getLinesReader(int mapBlock) {
-		return new LinesReader(inputFiles.get(mapBlock), blockSize);
+	public MapperReader getLinesReader(int mapBlock) {
+		return new FileMapperReader(inputFiles.get(mapBlock), blockSize);
 		// RandomAccessFile raf = null;
 		// try {
 		// raf = new RandomAccessFile(new File(inputPath), "r");
@@ -68,6 +59,14 @@ public class FileHandler {
 		// }
 		// }
 
+	}
+
+	public ReducerReader getMappedLinesReader(){
+		return new FileReducerReader();
+	}
+	
+	public Context getMapContext() {
+		return mapContext;
 	}
 
 	// public String getBlock(int mapBlock) {
@@ -89,5 +88,21 @@ public class FileHandler {
 	// }
 
 	// }
+	
+	private List<File> loadPaths() {
+		List<File> retValue = new ArrayList<>();
+		File f = new File(this.inputPath);
+		if (f.exists()) {
+			if (f.isFile())
+				retValue.add(f);
+			else{
+				File[] files = f.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					retValue.add(files[i]);
+				}
+			}
+		}
+		return retValue;
+	}
 
 }

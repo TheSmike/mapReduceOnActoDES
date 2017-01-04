@@ -9,7 +9,7 @@ import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
-import it.unipr.aotlab.mapreduce.file.FileHandler;
+import it.unipr.aotlab.mapreduce.file.ResourcesHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**
@@ -62,7 +62,7 @@ public final class WordCountMaster extends Behavior {
 		String inputPath = (String) v[1];
 		String outputPath = (String) v[2];
 		int blockSize = (int) v[3];
-		FileHandler fh = new FileHandler(inputPath, outputPath, blockSize);
+		ResourcesHandler fh = new ResourcesHandler(inputPath, outputPath, blockSize);
 		Reference[] workers = new Reference[this.workerNum];
 		for (int i = 0; i < this.workerNum; i++) {
 			workers[i] = actor(new WordCountWorker());
@@ -122,7 +122,7 @@ public final class WordCountMaster extends Behavior {
 		return new Reduce();
 	}
 
-	private Map getMapFunction(FileHandler fh, int mapBlock) {
+	private Map getMapFunction(ResourcesHandler fh, int mapBlock) {
 		return null;
 //		return new WaitAndEchoMap(fh, mapBlock);
 	}

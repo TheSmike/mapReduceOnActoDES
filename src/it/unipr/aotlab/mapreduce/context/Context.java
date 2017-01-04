@@ -1,6 +1,6 @@
 package it.unipr.aotlab.mapreduce.context;
 
-public interface MapOutputContext {
+public interface Context {
 
 	public void put(Object key, Object value);
 

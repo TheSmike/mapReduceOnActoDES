@@ -6,13 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LinesReader implements AutoCloseable {
+public class FileMapperReader implements MapperReader {
 
 	// private int blockSize;
 	private File fileToRead;
 	private BufferedReader reader;
 
-	public LinesReader(File file, int blockSize) {
+	public FileMapperReader(File file, int blockSize) {
 		this.fileToRead = file;
 		reader = null;
 		try {
@@ -24,6 +24,10 @@ public class LinesReader implements AutoCloseable {
 		// this.blockSize = blockSize;
 	}
 
+	/* (non-Javadoc)
+	 * @see it.unipr.aotlab.mapreduce.file.ILinesReader#readLine()
+	 */
+	@Override
 	public String readLine() {
 		try {
 			return reader.readLine();
