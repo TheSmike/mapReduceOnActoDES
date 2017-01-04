@@ -11,15 +11,15 @@ import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import stub.WaitAndEchoReduceJob;
 
-public class Boot {
 
+public class Boot {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;
 		final int blockSize = 1024;
-		final String inputPath = "resources/stub";
+		final String inputPath = "resources/CountWord";
 		final String outputPath = "resources/output/";
-		final MapJob mapJob = new CountWordMap();
+		final MapJob mapJob = new CountwordMap();
 		final ReduceJob reduceJob = new WaitAndEchoReduceJob();
 
 		Configuration c = Controller.INSTANCE.getConfiguration();
@@ -30,5 +30,4 @@ public class Boot {
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();
 	}
-
 }

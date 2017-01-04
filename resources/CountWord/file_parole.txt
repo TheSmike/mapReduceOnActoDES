@@ -1,0 +1,7 @@
+gatto gatto iguana
+gatto iguana ratto
+giraffa cane giraffa
+elefante cane gatto
+cane elefante iguana
+mastino leone giraffa
+ghepardo ratto mastino

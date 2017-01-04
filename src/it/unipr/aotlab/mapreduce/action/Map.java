@@ -5,7 +5,7 @@ package it.unipr.aotlab.mapreduce.action;
 
 import it.unipr.aotlab.actodes.interaction.Action;
 import it.unipr.aotlab.mapreduce.context.MapJob;
-import it.unipr.aotlab.mapreduce.resources.InputContext;
+import it.unipr.aotlab.mapreduce.resources.InputLinesReader;
 import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
 
 /**
@@ -25,7 +25,7 @@ public class Map implements Action {
 	}
 
 	public void executeBlock() throws Exception {
-		try (InputContext lr = rh.getInputContext(mapBlock)) {
+		try (InputLinesReader lr = rh.getInputLinesReader(mapBlock)) {
 			String line = null;
 			while ((line = lr.readLine()) != null) {
 				// esegui elaborazione sulla riga

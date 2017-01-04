@@ -5,28 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unipr.aotlab.mapreduce.context.Context;
-import it.unipr.aotlab.mapreduce.context.DefaultContext;
-import it.unipr.aotlab.mapreduce.context.FileContext;
+import it.unipr.aotlab.mapreduce.context.MapFileContext;
+import it.unipr.aotlab.mapreduce.context.MapContext;
 
 public class ResourcesHandler {
 
-//	private String inputPath;
+	private String inputPath;
 	private String outputPath;
 	private int blockSize;
-	
-	private InputContext inputContext;
+
 	private List<File> inputFiles;
-	private final MapContext mapContext;
+	private List<File> sortedFiles;
+	private final Context mapOutputContext;
 	private final Context reduceContext;
+	private String tempPath;
 
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
-//		this.inputPath = inputPath;
-		inputFiles = loadPaths();
+		this.inputPath = inputPath;
+		this.tempPath = inputPath + "/aaa";
 		this.outputPath = outputPath;
 		this.blockSize = blockSize;
-		this.mapContext = new DefaultContext();
-		this.reduceContext = new FileContext(outputPath);
+		this.inputFiles = loadPaths();
+		this.sortedFiles = null;
+		this.mapOutputContext = new MapContext();//new MapFileContext(tempPath);
+		this.reduceContext = new MapFileContext(outputPath);
 	}
 
 	/**
@@ -38,55 +41,33 @@ public class ResourcesHandler {
 		return inputFiles.size();
 	}
 
-	public int countReduceBlocks() {
-		// TODO Auto-generated method stub
-		return 7;
+	public InputLinesReader getInputLinesReader(int blockNumber) {
+		return new InputLinesReader(inputFiles.get(blockNumber), blockSize);
 	}
 
-	public InputContext getInputContext(int mapBlock) {
-		return new InputContext(inputFiles.get(mapBlock), blockSize);
-	}
-	
-	public MapContext getMapContext() {
-		return mapContext;
-	}
-
-	public ReducerReader getReducerReader() {
-		return new FileReducerReader();
-//		return FileMapperReader.getReducerReader();
+	public Context getMapContext() {
+		return mapOutputContext;
 	}
 
 	public void sortAndGroup() {
-		//create new Context from mapContext where values are grouped by key
-		//temp 
-		//this.mapContext
+		// create new Context from mapContext where values are grouped by key
+		// temp
+		// this.mapContext
+		this.sortedFiles = new ArrayList<>();
 	}
-	
 
+	public int countReduceBlocks() {
+		// TODO Auto-generated method stub
+		return 7;
+		//return this.sortedFiles.size();
+	}
+	public SortedLinesReader getSortedLinesReader(int blockNumber) {
+		return new SortedLinesReader(sortedFiles.get(blockNumber), this.blockSize);
+	}
 
 	public Context getReduceContext() {
 		return reduceContext;
 	}
-
-	// public String getBlock(int mapBlock) {
-	// RandomAccessFile raf = null;
-	// try {
-	// raf = new RandomAccessFile(new File(inputPath), "r");
-	// raf.seek(mapBlock * blockSize);
-	// byte[] b = new byte[blockSize];
-	// raf.readLine();
-	// } catch (Exception e) {
-	// throw new RuntimeException(e);
-	// }finally {
-	// if (raf != null)
-	// try {
-	// raf.close();
-	// } catch (IOException e) {
-	// throw new RuntimeException(e);
-	// }
-	// }
-
-	// }
 
 	private List<File> loadPaths() {
 		List<File> retValue = new ArrayList<>();

@@ -3,13 +3,16 @@ package it.unipr.aotlab.mapreduce.context;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-public class FileContext implements Context, AutoCloseable {
+public class MapFileContext implements Context, AutoCloseable {
 
 	String outputPath;
 	BufferedWriter bw;
 
-	public FileContext(String outputPath) {
+	public MapFileContext(String outputPath) {
 		try {
 			this.outputPath = outputPath;
 			File f = new File(outputPath);
@@ -41,6 +44,16 @@ public class FileContext implements Context, AutoCloseable {
 		if (bw != null)
 			bw.close();
 
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void putAll(Map map) {
+		Set<Entry> setEntry = map.entrySet();
+		for (Entry entry : setEntry) {
+			put(entry.getKey(), entry.getValue());
+		}
+		
 	}
 
 }

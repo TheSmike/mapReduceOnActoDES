@@ -16,7 +16,7 @@ public class Boot {
 		// params
 		final int workers = 3;
 		final int blockSize = 1024;
-		final String inputPath = "resources/stub";
+		final String inputPath = "resources/stub/";
 		final String outputPath = "resources/output/";
 		final MapJob mapJob = new WaitAndEchoJob();
 		final ReduceJob reduceJob = new WaitAndEchoReduceJob();
