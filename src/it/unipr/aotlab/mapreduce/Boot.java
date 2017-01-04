@@ -8,8 +8,8 @@ import it.unipr.aotlab.actodes.runtime.Controller;
 import it.unipr.aotlab.actodes.runtime.active.ThreadPoolScheduler;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
-import stub.WaitAndEchoJob;
-import stub.WaitAndEchoReduceJob;
+import it.unipr.aotlab.mapreduce.stub.WaitAndEchoJob;
+import it.unipr.aotlab.mapreduce.stub.WaitAndEchoReduceJob;
 
 public class Boot {
 	public static void main(String[] args) {

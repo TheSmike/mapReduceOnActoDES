@@ -9,7 +9,6 @@ import it.unipr.aotlab.actodes.runtime.active.ThreadPoolScheduler;
 import it.unipr.aotlab.mapreduce.Master;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
-import stub.WaitAndEchoReduceJob;
 
 
 public class Boot {
@@ -17,10 +16,10 @@ public class Boot {
 		// params
 		final int workers = 3;
 		final int blockSize = 1024;
-		final String inputPath = "resources/CountWord";
-		final String outputPath = "resources/output/";
+		final String inputPath = "resources/CountWord/";
+		final String outputPath = "resources/CountWordoutput/";
 		final MapJob mapJob = new CountWordMap();
-		final ReduceJob reduceJob = new WaitAndEchoReduceJob();
+		final ReduceJob reduceJob = new CountwordReduce();
 
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());

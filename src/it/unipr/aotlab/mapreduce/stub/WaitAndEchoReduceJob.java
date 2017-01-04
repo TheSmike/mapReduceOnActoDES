@@ -1,4 +1,4 @@
-package stub;
+package it.unipr.aotlab.mapreduce.stub;
 
 import java.util.List;
 import java.util.Random;

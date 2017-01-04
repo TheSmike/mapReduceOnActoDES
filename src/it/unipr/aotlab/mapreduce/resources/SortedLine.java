@@ -4,8 +4,8 @@ import java.util.List;
 
 public class SortedLine {
 
-	String key;
-	List<String> values;
+	public final String key;
+	public final List<String> values;
 
 	public SortedLine(String key, List<String> values) {
 		this.key = key;

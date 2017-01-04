@@ -1,0 +1,9 @@
+cane 1 1 1 
+elefante 1 1 
+gatto 2 1 1 
+ghepardo 1 
+giraffa 2 1 
+iguana 1 1 1 
+leone 1 
+mastino 1 1 
+ratto 1 1 

@@ -28,6 +28,10 @@ public class MapContext implements Context {
 		return list.toString();
 	}
 	
+	public List<Entry> getList() {
+		return list;
+	}
+	
 	
 
 	private class MyEntry implements Entry {
