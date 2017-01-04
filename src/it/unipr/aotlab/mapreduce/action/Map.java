@@ -32,6 +32,7 @@ public class Map implements Action {
 				job.execute(line, rh.getMapContext());
 				// fine
 			}
+			rh.getMapContext().close();
 		}
 	}
 

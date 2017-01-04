@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.unipr.aotlab.mapreduce.utils.StrUtils;
+
 public class SortedLinesReader extends LinesReader {
 
 	public SortedLinesReader(File file, int blockSize) {
@@ -14,7 +16,10 @@ public class SortedLinesReader extends LinesReader {
 	public SortedLine readLine() {
 		try {
 			String line = super.reader.readLine();
-			String[] array = line.split(" ", 1);
+			if(StrUtils.isEmpty(line))
+				return null;
+			
+			String[] array = line.split(" ", 2);
 			if (array.length >= 2)
 				return new SortedLine(array[0], Arrays.asList(array[1].split(" ")));
 			else

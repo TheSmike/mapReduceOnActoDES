@@ -17,7 +17,7 @@ public class Boot {
 		final int workers = 3;
 		final int blockSize = 1024;
 		final String inputPath = "resources/CountWord/";
-		final String outputPath = "resources/CountWordoutput/";
+		final String outputPath = "output/CountWord/output.txt";
 		final MapJob mapJob = new CountWordMap();
 		final ReduceJob reduceJob = new CountWordReduce();
 

@@ -34,9 +34,10 @@ public class Reduce implements Action {
 			SortedLine line = null;
 			while ((line = slr.readLine()) != null) {
 				// esegui elaborazione sulla riga
-				job.execute(line.key, line.values, rh.getMapContext());
-				// fine
+				job.execute(line.key, line.values, rh.getReduceContext());
+				// fine	
 			}
+			rh.getReduceContext().close();
 		}
 	}
 	

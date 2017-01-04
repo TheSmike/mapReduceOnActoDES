@@ -146,7 +146,7 @@ public final class Master extends Behavior {
 		while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
 			reduceBlocksCount--;
 			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to reduce");
-			future(workers[this.currentWorkerIdx++], getReduceFunction(0), process);
+			future(workers[this.currentWorkerIdx++], getReduceFunction(reduceBlocksCount--), process);
 		}
 	}
 

@@ -65,4 +65,10 @@ public class MapContext implements Context {
 
 	}
 
+
+
+	@Override
+	public void close() throws Exception {
+	}
+
 }

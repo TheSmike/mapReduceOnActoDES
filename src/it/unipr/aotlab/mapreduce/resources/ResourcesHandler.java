@@ -73,7 +73,7 @@ public class ResourcesHandler {
 				}
 			}
 
-			File file = new File("resources/tmp/tmpOut.txt");
+			File file = new File("output/tmp/tmpOut.txt");
 			file.getParentFile().mkdirs();
 			if (!file.exists())
 				file.createNewFile();

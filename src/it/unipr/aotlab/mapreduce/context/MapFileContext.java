@@ -21,8 +21,10 @@ public class MapFileContext implements Context, AutoCloseable {
 					f.mkdir();
 				f = new File(f, "output1.txt");
 			} else {
-				if (!f.exists())
+				if (!f.exists()) {
+					f.getParentFile().mkdirs();
 					f.createNewFile();
+				}
 			}
 			bw = new BufferedWriter(new FileWriter(f));
 		} catch (Exception e) {
@@ -33,7 +35,7 @@ public class MapFileContext implements Context, AutoCloseable {
 	@Override
 	public void put(Object key, Object value) {
 		try {
-			bw.write(key + " " + value);
+			bw.write(key + " " + value + "\n");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -41,8 +43,10 @@ public class MapFileContext implements Context, AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
-		if (bw != null)
+		if (bw != null) {
+			bw.flush();
 			bw.close();
+		}
 
 	}
 
@@ -53,7 +57,7 @@ public class MapFileContext implements Context, AutoCloseable {
 		for (Entry entry : setEntry) {
 			put(entry.getKey(), entry.getValue());
 		}
-		
+
 	}
 
 }

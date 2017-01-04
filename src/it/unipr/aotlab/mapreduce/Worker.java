@@ -58,11 +58,13 @@ public final class Worker extends KillableBehavior {
 
 		// risposta nel caso di reduceCase
 		this.reduceCase = (m) -> {
-			//TODO replace with true reduce
+			Reduce reduce = (Reduce) m.getContent();
 			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+				reduce.executeBlock();
+			} catch (Exception e) {
+				System.err.println("error executing Reduce function: " + e.getMessage());
 				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			System.out.println(this.getReference().getName() + " executed reduce function");
 			send(m, Done.DONE);
