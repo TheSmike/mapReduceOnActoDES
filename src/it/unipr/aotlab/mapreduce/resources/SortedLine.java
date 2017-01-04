@@ -1,4 +1,4 @@
-package it.unipr.aotlab.mapreduce.file;
+package it.unipr.aotlab.mapreduce.resources;
 
 import java.util.List;
 

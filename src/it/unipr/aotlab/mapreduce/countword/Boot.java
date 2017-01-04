@@ -6,16 +6,26 @@ import it.unipr.aotlab.actodes.logging.Logger;
 import it.unipr.aotlab.actodes.logging.TextualFormatter;
 import it.unipr.aotlab.actodes.runtime.Controller;
 import it.unipr.aotlab.actodes.runtime.active.ThreadPoolScheduler;
+import it.unipr.aotlab.mapreduce.Master;
+import it.unipr.aotlab.mapreduce.context.MapJob;
+import it.unipr.aotlab.mapreduce.context.ReduceJob;
+import stub.WaitAndEchoReduceJob;
 
 public class Boot {
 
 	public static void main(String[] args) {
-		final int workers = 3;	
+		// params
+		final int workers = 3;
 		final int blockSize = 1024;
+		final String inputPath = "resources/stub";
+		final String outputPath = "resources/output/";
+		final MapJob mapJob = new CountWordMap();
+		final ReduceJob reduceJob = new WaitAndEchoReduceJob();
+
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());
-		c.setCreator(WordCountMaster.class.getName());
-		c.setArguments(workers, "inputPath", "outputPath", blockSize);
+		c.setCreator(Master.class.getName());
+		c.setArguments(workers, inputPath, outputPath, blockSize, mapJob, reduceJob);
 		c.setFilter(Logger.ALLLOGS);
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();

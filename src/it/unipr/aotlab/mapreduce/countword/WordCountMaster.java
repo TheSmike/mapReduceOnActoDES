@@ -9,7 +9,7 @@ import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
-import it.unipr.aotlab.mapreduce.file.ResourcesHandler;
+import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**

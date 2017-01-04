@@ -1,4 +1,4 @@
-package it.unipr.aotlab.mapreduce.file;
+package it.unipr.aotlab.mapreduce.resources;
 
 public interface ReducerReader extends AutoCloseable {
 	

@@ -6,7 +6,7 @@ package it.unipr.aotlab.mapreduce.action;
 import it.unipr.aotlab.actodes.interaction.Action;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
-import it.unipr.aotlab.mapreduce.file.ResourcesHandler;
+import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
 
 /**
  * @author Omi087

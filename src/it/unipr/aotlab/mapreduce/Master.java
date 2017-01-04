@@ -9,12 +9,10 @@ import it.unipr.aotlab.actodes.interaction.Kill;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
-import it.unipr.aotlab.mapreduce.context.DefaultMapContext;
 import it.unipr.aotlab.mapreduce.context.MapJob;
-import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
-import it.unipr.aotlab.mapreduce.file.ResourcesHandler;
+import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**
@@ -46,7 +44,7 @@ public final class Master extends Behavior {
 	private int workerNum;
 	private MapJob mapJob;
 	private ReduceJob reduceJob;
-	
+
 	private ResourcesHandler rh;
 
 	/**
@@ -81,7 +79,7 @@ public final class Master extends Behavior {
 			System.out.println("Nessun file da elaborare");
 			return;
 		}
-		//Initialize Worker
+		// Initialize Worker
 		Reference[] workers = new Reference[this.workerNum];
 		for (int i = 0; i < this.workerNum; i++) {
 			workers[i] = actor(new Worker());
@@ -91,11 +89,10 @@ public final class Master extends Behavior {
 		process = (m) -> {
 			System.out.println("risposta da " + m.getSender().getName() + ": " + m.getContent());
 			this.responseCount++;
-
 			if (mapBlocksCount < maxMapBlocks) {
 				launchMapWorker(m);
 			} else if (this.responseCount == this.maxMapBlocks) {
-				sortMapResult();
+				sortMapResult(workers);
 				launchAllReduceWorker(workers);
 			} else if (reduceBlocksCount > 0) {
 				launchReduceWorker(m);
@@ -108,17 +105,15 @@ public final class Master extends Behavior {
 		/******** end case ********/
 
 		// first call to workers
-		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
-
-			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
-			future(workers[this.currentWorkerIdx++], getMapFunction(mapBlocksCount++), process);
-		}
+		launchAllMapWorker(workers);
 
 	}
 
-	private void sortMapResult() {
+	/**** PRIVATE METHOD ****/
+
+	private void sortMapResult(Reference[] workers) {
 		System.out.println(rh.getMapContext());
-//		this.context.sort();
+		rh.sortAndGroup();
 	}
 
 	private Behavior stopApplication(Reference[] workers) {
@@ -129,11 +124,17 @@ public final class Master extends Behavior {
 		return Shutdown.INSTANCE;
 	}
 
-	private void launchReduceWorker(Message m) {
-		// assign another block to reduce to this worker
-		reduceBlocksCount--;
-		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
-		future(m, getReduceFunction(0), process);
+	private void launchAllMapWorker(Reference[] workers) {
+		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
+			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
+			future(workers[this.currentWorkerIdx++], getMapFunction(mapBlocksCount++), process);
+		}
+	}
+
+	private void launchMapWorker(Message m) {
+		// assign another block to this worker
+		System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
+		future(m, getMapFunction(mapBlocksCount++), process);
 	}
 
 	private void launchAllReduceWorker(Reference[] workers) {
@@ -149,10 +150,11 @@ public final class Master extends Behavior {
 		}
 	}
 
-	private void launchMapWorker(Message m) {
-		// assign another block to this worker
-		System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
-		future(m, getMapFunction(mapBlocksCount++), process);
+	private void launchReduceWorker(Message m) {
+		// assign another block to reduce to this worker
+		reduceBlocksCount--;
+		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
+		future(m, getReduceFunction(0), process);
 	}
 
 	private Reduce getReduceFunction(int reduceBlock) {
