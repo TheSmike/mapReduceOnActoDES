@@ -93,7 +93,7 @@ public class ResourcesHandler {
 			throw new RuntimeException(e);
 		}
 
-		sortedFiles = loadPaths("resources/tmp/");
+		sortedFiles = loadPaths("output/tmp/");
 		
 	}
 
