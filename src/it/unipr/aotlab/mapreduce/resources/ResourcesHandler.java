@@ -47,6 +47,11 @@ public class ResourcesHandler {
 		return inputFiles.size();
 	}
 
+	/**
+	 * 
+	 * @param blockNumber
+	 * @return
+	 */
 	public InputLinesReader getInputLinesReader(int blockNumber) {
 		return new InputLinesReader(inputFiles.get(blockNumber), blockSize);
 	}
