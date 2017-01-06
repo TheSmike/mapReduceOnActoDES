@@ -33,7 +33,7 @@ public class MapFileContext implements Context, AutoCloseable {
 	}
 
 	@Override
-	public void put(Object key, Object value) {
+	public synchronized void put(Object key, Object value) {
 		try {
 			bw.write(key + " " + value + "\n");
 		} catch (Exception e) {

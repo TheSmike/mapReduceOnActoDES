@@ -10,7 +10,7 @@ import it.unipr.aotlab.mapreduce.Master;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
-public class Boot {
+public class BootStub {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;

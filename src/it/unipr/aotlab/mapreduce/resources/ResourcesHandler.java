@@ -16,9 +16,9 @@ import it.unipr.aotlab.mapreduce.context.MapContext;
 
 public class ResourcesHandler {
 
+	private static final String TMP_PATH = "output/tmp/";
 	private String inputPath;
 	private String outputPath;
-	private String tempPath;
 	private int blockSize;
 
 	private List<File> inputFiles;
@@ -29,7 +29,6 @@ public class ResourcesHandler {
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
 		this.inputPath = inputPath;
-		this.tempPath = inputPath + "/aaa"; //TODO fix 
 		this.outputPath = outputPath;
 		this.blockSize = blockSize;
 		this.inputFiles = loadPaths(this.inputPath);
@@ -61,7 +60,7 @@ public class ResourcesHandler {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void sortAndGroup() {
+	public void oldSortAndGroup() {
 		try {
 			// create new Context from mapContext where values are grouped by
 			// key
@@ -78,7 +77,7 @@ public class ResourcesHandler {
 				}
 			}
 
-			File file = new File("output/tmp/tmpOut.txt");
+			File file = new File(TMP_PATH + "tmpOut.txt");
 			file.getParentFile().mkdirs();
 			if (!file.exists())
 				file.createNewFile();
@@ -98,7 +97,7 @@ public class ResourcesHandler {
 			throw new RuntimeException(e);
 		}
 
-		sortedFiles = loadPaths("output/tmp/");
+		sortedFiles = loadPaths(TMP_PATH);
 		
 	}
 
@@ -128,6 +127,28 @@ public class ResourcesHandler {
 			}
 		}
 		return retValue;
+	}
+
+	public void closeReduceContext() {
+		try {
+			reduceContext.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	public void deleteTmpFiles() {
+		File f = new File(TMP_PATH);
+		for (File file : f.listFiles()) {
+			file.delete();
+		}
+		
+	}
+
+	public void sortAndGroup() {
+		// TODO Auto-generated method stub
+		sortedFiles = loadPaths(TMP_PATH);
 	}
 
 }

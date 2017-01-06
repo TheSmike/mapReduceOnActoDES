@@ -11,7 +11,7 @@ import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 
-public class Boot {
+public class BootCountWord {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;

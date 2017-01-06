@@ -37,7 +37,6 @@ public class Reduce implements Action {
 				job.execute(line.key, line.values, rh.getReduceContext());
 				// fine	
 			}
-			rh.getReduceContext().close();
 		}
 	}
 	

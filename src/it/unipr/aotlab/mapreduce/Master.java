@@ -94,9 +94,11 @@ public final class Master extends Behavior {
 			} else if (this.responseCount == this.maxMapBlocks) {
 				sortMapResult(workers);
 				launchAllReduceWorker(workers);
-			} else if (reduceBlocksCount > 0) {
+			} else if (reduceBlocksCount < maxReduceBlocksCount) {
 				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
+				rh.closeReduceContext();
+				rh.deleteTmpFiles();
 				return stopApplication(workers);
 			}
 
@@ -139,22 +141,21 @@ public final class Master extends Behavior {
 
 	private void launchAllReduceWorker(Reference[] workers) {
 		// All workers have ended Map fucntion, start with Reduce function
-		this.reduceBlocksCount = rh.countReduceBlocks();
-		this.maxReduceBlocksCount = this.reduceBlocksCount;
+		this.reduceBlocksCount = 0;
+		this.maxReduceBlocksCount = rh.countReduceBlocks();
+		System.out.println("blocchi per Reduce: " + maxReduceBlocksCount);
 		currentWorkerIdx = 0;
 		// first call to workers
-		while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount > 0) {
-			reduceBlocksCount--;
+		while (currentWorkerIdx < this.workerNum && this.reduceBlocksCount < maxReduceBlocksCount) {
 			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to reduce");
-			future(workers[this.currentWorkerIdx++], getReduceFunction(reduceBlocksCount--), process);
+			future(workers[this.currentWorkerIdx++], getReduceFunction(reduceBlocksCount++), process);
 		}
 	}
 
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
-		reduceBlocksCount--;
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
-		future(m, getReduceFunction(0), process);
+		future(m, getReduceFunction(reduceBlocksCount++), process);
 	}
 
 	private Reduce getReduceFunction(int reduceBlock) {
