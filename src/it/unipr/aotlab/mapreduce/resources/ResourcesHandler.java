@@ -1,24 +1,18 @@
 package it.unipr.aotlab.mapreduce.resources;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import it.unipr.aotlab.mapreduce.context.Context;
-import it.unipr.aotlab.mapreduce.context.MapFileContext;
 import it.unipr.aotlab.mapreduce.context.MapContext;
+import it.unipr.aotlab.mapreduce.context.MapFileContext;
 
 public class ResourcesHandler {
 
-	private static final String TMP_PATH = "output/tmp/";
+	private final String tmpPath;
 	private String inputPath;
-	private String outputPath;
 	private int blockSize;
 
 	private List<File> inputFiles;
@@ -29,11 +23,11 @@ public class ResourcesHandler {
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
 		this.inputPath = inputPath;
-		this.outputPath = outputPath;
+		this.tmpPath = outputPath + "tmp" + getIndex() + "/";
 		this.blockSize = blockSize;
 		this.inputFiles = loadPaths(this.inputPath);
 		this.sortedFiles = null;
-		this.mapOutputContext = new MapContext();// new MapFileContext(tempPath);
+		this.mapOutputContext = new MapContext(this.tmpPath);
 		this.reduceContext = new MapFileContext(outputPath);
 	}
 
@@ -57,48 +51,6 @@ public class ResourcesHandler {
 
 	public Context getMapContext() {
 		return mapOutputContext;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void oldSortAndGroup() {
-		try {
-			// create new Context from mapContext where values are grouped by
-			// key
-			MapContext mContext = (MapContext) mapOutputContext;
-			List<Entry> lista = mContext.getList();
-			Map<Object, List> mappa = new TreeMap<>();
-			for (Entry entry : lista) {
-				if (mappa.containsKey(entry.getKey())) {
-					mappa.get(entry.getKey()).add(entry.getValue());
-				} else {
-					List tmpList = new ArrayList<>();
-					tmpList.add(entry.getValue());
-					mappa.put(entry.getKey(), tmpList);
-				}
-			}
-
-			File file = new File(TMP_PATH + "tmpOut.txt");
-			file.getParentFile().mkdirs();
-			if (!file.exists())
-				file.createNewFile();
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-
-			for (Entry<Object, List> entry : mappa.entrySet()) {
-				bw.write(entry.getKey() + " ");
-				List values = entry.getValue();
-				for (Object object : values) {
-					bw.write(object + " ");
-				}
-				bw.write("\n");
-			}
-			bw.close();
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		sortedFiles = loadPaths(TMP_PATH);
-		
 	}
 
 	public int countReduceBlocks() {
@@ -139,16 +91,24 @@ public class ResourcesHandler {
 	}
 
 	public void deleteTmpFiles() {
-		File f = new File(TMP_PATH);
+		File f = new File(tmpPath);
+//		File f2 = new File(f.getParentFile(), "/tmp"+ (new Date()).getTime() + "/");
+//		f2.mkdir();
 		for (File file : f.listFiles()) {
 			file.delete();
+//			file.renameTo(new File(f2, file.getName()));
 		}
 		
 	}
 
 	public void sortAndGroup() {
+		((MapContext)mapOutputContext).sortAll();
+		sortedFiles = loadPaths(tmpPath + "/sorted");
+	}
+	
+	private long getIndex() {
 		// TODO Auto-generated method stub
-		sortedFiles = loadPaths(TMP_PATH);
+		return (new Date().getTime());
 	}
 
 }

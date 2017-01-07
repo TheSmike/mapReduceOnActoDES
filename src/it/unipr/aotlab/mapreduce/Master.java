@@ -98,7 +98,7 @@ public final class Master extends Behavior {
 				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
 				rh.closeReduceContext();
-				rh.deleteTmpFiles();
+				//rh.deleteTmpFiles();
 				return stopApplication(workers);
 			}
 
@@ -114,7 +114,6 @@ public final class Master extends Behavior {
 	/**** PRIVATE METHOD ****/
 
 	private void sortMapResult(Reference[] workers) {
-		System.out.println(rh.getMapContext());
 		rh.sortAndGroup();
 	}
 

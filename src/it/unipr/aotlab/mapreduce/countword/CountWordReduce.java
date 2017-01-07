@@ -42,7 +42,7 @@ public class CountWordReduce implements ReduceJob {
 				for (Integer myInt : oldList) { 
 				  newList.add(String.valueOf(myInt)); 
 				}
-	Context contesto = new MapContext();
+	Context contesto = new MapContext("output/CountWord/prove/");
 	
 	reduce.execute("gatto",newList,contesto);
 		

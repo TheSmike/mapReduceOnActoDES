@@ -16,16 +16,10 @@ public class MapFileContext implements Context, AutoCloseable {
 		try {
 			this.outputPath = outputPath;
 			File f = new File(outputPath);
-			if (f.isDirectory()) {
-				if (!f.exists())
-					f.mkdir();
-				f = new File(f, "output1.txt");
-			} else {
-				if (!f.exists()) {
-					f.getParentFile().mkdirs();
-					f.createNewFile();
-				}
-			}
+			if (f.exists() && f.isFile())
+				throw new RuntimeException("outputPath is a File, expected directory");
+			f.mkdirs();
+			f = new File(f, "output1.txt");
 			bw = new BufferedWriter(new FileWriter(f));
 		} catch (Exception e) {
 			throw new RuntimeException(e);

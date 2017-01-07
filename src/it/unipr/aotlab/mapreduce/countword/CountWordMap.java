@@ -25,7 +25,7 @@ public class CountWordMap implements MapJob {
 		
 		
 		//splitto la parole di una riga
-		System.out.println(list+"\n");
+//		System.out.println(list+"\n");
 		
 		//conto le occorrenze di ciascuna parola e ne popolo una hasmap locale per riga
 		for(int i = 0; i < list.size(); i++)
@@ -60,14 +60,14 @@ public class CountWordMap implements MapJob {
 		  
 		//context.put(elem,conteggio);
 		
-		System.out.println("La parola "+elem+" è stata trovata nella riga "+contatore+" volte \n");
+//		System.out.println("La parola "+elem+" è stata trovata nella riga "+contatore+" volte \n");
 		
 		map.put(elem,contatore);
 		
 		}
 		else
 		{
-		System.out.println("Parola "+elem+" già analizzata");
+//		System.out.println("Parola "+elem+" già analizzata");
 		}
 		
 		}
