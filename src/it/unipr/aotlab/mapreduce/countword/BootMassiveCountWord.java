@@ -11,13 +11,13 @@ import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 
-public class BootCountWord {
+public class BootMassiveCountWord {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;
 		final int blockSize = 1024;
-		final String inputPath = "resources/CountWord/";
-		final String outputPath = "output/CountWord/";
+		final String inputPath = "resources/CountWordMassive/";
+		final String outputPath = "output/CountWordMassive/";
 		final MapJob mapJob = new CountWordMap();
 		final ReduceJob reduceJob = new CountWordReduce();
 
