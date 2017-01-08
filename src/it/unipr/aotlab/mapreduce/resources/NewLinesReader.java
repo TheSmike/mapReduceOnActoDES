@@ -38,6 +38,8 @@ public class NewLinesReader {
 			throw new RuntimeException(e);
 		}
 		
+		
+		
 		reader.seek(startPosition);
 		
 		
@@ -213,10 +215,12 @@ public class NewLinesReader {
 			return null;
 			}
 		
+		pointer = reader.getFilePointer();
+		//System.out.println("Startposition: "+pointer);
 		
 		String riga = reader.readLine();
 		
-		
+		int pointer2 = (int) reader.getFilePointer();
 		
 		//pointer = reader.getFilePointer();
 		
@@ -228,7 +232,9 @@ public class NewLinesReader {
 		
 		if(riga != null)
 		{
-		byte_letti += (riga.length());
+		//byte_letti += (riga.length());
+		byte_letti += (pointer2-pointer);
+		//System.out.println("byte letti:"+ byte_letti);
 		}
 		
 		

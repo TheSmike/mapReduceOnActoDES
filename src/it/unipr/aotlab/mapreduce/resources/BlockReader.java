@@ -68,13 +68,15 @@ public class BlockReader {
 	  		//salvo il puntatore corrente di lettura file
 	  		long pointer = reader.getFilePointer();
 	  		
-	  		System.out.println("pointer: "+pointer+" - "+fileToRead.length()+" \n");
+	  		//System.out.println("sono alla posizione dopo l incremento con il blocco : "+pointer+"/"+fileToRead.length());
 	  		
-	  		if(pointer > fileToRead.length()) 
+	  		
+	  		if(pointer >= fileToRead.length()) 
 	  			{
-	  			System.out.println("sto per scartare un blocco \n");
+	  			
 	  			pointer = fileToRead.length();
 	  			blocchi_di_scarto++;
+	  			//System.out.println("blocchi di scarto: "+blocchi_di_scarto);
 	  			scarto = true;
 	  			reader.seek(pointer);
 	  			}
@@ -90,11 +92,11 @@ public class BlockReader {
 	  		reader.seek(pointer-1);
 	  		byte bit = reader.readByte();
 	  		char c = (char) bit;
-	  		System.out.println("char: "+c+"\n");
+	  		
 	  		if(c != '\n') // controllo di non essere appena a capo
 	  		{
-	  			//System.out.println("sono a fine riga");
-	  		System.out.println("Non sono a fine riga \n");	
+	 
+	  		//System.out.println("Non sono a fine riga \n");	
 	  		
 	  		//ho dei byte da leggere per arrivare a fine riga
 	  		
@@ -102,10 +104,18 @@ public class BlockReader {
 	  				
 	  		String line = reader.readLine();
 	  		
-	  		System.out.println(line);
+	  		//System.out.println(line);
 	  		
-	  		startPosition = startPosition+blockSize+line.length()+1;
-	  		//startPosition = startPosition+blockSize+line.length();
+	  		//MEMO POINTER - in questo modo dovrebbe essere preciso
+	  		pointer = reader.getFilePointer();
+	  		
+	  		startPosition = (int) pointer;
+	  		
+	  		//+1 worka con dei bug
+	  		//startPosition = startPosition+blockSize+line.length()+1;
+	  		//startPosition = startPosition+blockSize+line.length()+2;
+	  		
+	  		
 	  		}
 	  		else
 	  		{
@@ -127,13 +137,19 @@ public class BlockReader {
 	    	
 	    } 
 		
-		
+	    /*
+		int x = 0;
+	    
 	    for(Integer posizione : startPosition_list)
 	    {
-	    	System.out.print("Startposition blocchi :"+posizione+"\n");
+	    	
+	    	System.out.print("Startposition blocco "+ x+" :"+posizione+"\n");
+	    	x++;
 	    }
 	    
-	    System.out.println("num blocchi da scartare \n :"+ blocchi_di_scarto + "\n");
+	    */
+	    
+	    
 	    if( blocchi_di_scarto > 0) this.totalBlockNumber -= blocchi_di_scarto;
 	    
 	    reader.close();
@@ -158,6 +174,7 @@ public class BlockReader {
 		//System.out.println("lunghezza_file:"+f.length());
 		
 		//return new NewLinesReader(blockNumber,blockSize,f);
+		//System.out.println("BLOCCO :"+ blockNumber + " startPosition: "+ startPosition_list.get(blockNumber));
 		return new NewLinesReader(startPosition_list.get(blockNumber), blockSize, f );
 		
 	}
@@ -186,7 +203,7 @@ public class BlockReader {
 		
 		int n_blocchi = blockreader.getTotalBlockNumber();
 		
-		System.out.println("Il numero di blocchi in cui spezzo il file è "+n_blocchi+" \n");
+		//System.out.println("Il numero di blocchi in cui spezzo il file è "+n_blocchi+" \n");
 		
 		for(int i = 0; i < blockreader.totalBlockNumber; i++)
 		{
@@ -195,7 +212,7 @@ public class BlockReader {
 		  
 		  String line;
 		
-		  System.out.println("iterazione "+i+"\n");
+		  //System.out.println("iterazione "+i+"\n");
 		  while ((line = line_reader.readLine()) != null) {
 		    // esegui elaborazione sulla riga
 			 System.out.println("readline: ["+line+"]");
