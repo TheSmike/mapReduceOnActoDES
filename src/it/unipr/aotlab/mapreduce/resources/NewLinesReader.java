@@ -213,7 +213,10 @@ public class NewLinesReader {
 			return null;
 			}
 		
+		
 		String riga = reader.readLine();
+		
+		
 		
 		//pointer = reader.getFilePointer();
 		

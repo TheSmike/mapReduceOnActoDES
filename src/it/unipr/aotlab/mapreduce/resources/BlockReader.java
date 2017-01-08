@@ -68,8 +68,11 @@ public class BlockReader {
 	  		//salvo il puntatore corrente di lettura file
 	  		long pointer = reader.getFilePointer();
 	  		
+	  		System.out.println("pointer: "+pointer+" - "+fileToRead.length()+" \n");
+	  		
 	  		if(pointer > fileToRead.length()) 
 	  			{
+	  			System.out.println("sto per scartare un blocco \n");
 	  			pointer = fileToRead.length();
 	  			blocchi_di_scarto++;
 	  			scarto = true;
@@ -87,10 +90,11 @@ public class BlockReader {
 	  		reader.seek(pointer-1);
 	  		byte bit = reader.readByte();
 	  		char c = (char) bit;
+	  		System.out.println("char: "+c+"\n");
 	  		if(c != '\n') // controllo di non essere appena a capo
 	  		{
 	  			//System.out.println("sono a fine riga");
-	  			
+	  		System.out.println("Non sono a fine riga \n");	
 	  		
 	  		//ho dei byte da leggere per arrivare a fine riga
 	  		
@@ -98,11 +102,21 @@ public class BlockReader {
 	  				
 	  		String line = reader.readLine();
 	  		
-	  		//System.out.println(line);
+	  		System.out.println(line);
 	  		
-	  		startPosition = startPosition+blockSize+line.length()+2;
+	  		startPosition = startPosition+blockSize+line.length()+1;
+	  		//startPosition = startPosition+blockSize+line.length();
 	  		}
+	  		else
+	  		{
+	  		System.out.println("Sono a fine riga \n");
+	  		startPosition =	startPosition+blockSize;
 	  		}
+	  		
+	  		
+	  		
+	  		}
+	  		
 	  		
 	  		}
 	      }
@@ -119,7 +133,10 @@ public class BlockReader {
 	    	System.out.print("Startposition blocchi :"+posizione+"\n");
 	    }
 	    
+	    System.out.println("num blocchi da scartare \n :"+ blocchi_di_scarto + "\n");
 	    if( blocchi_di_scarto > 0) this.totalBlockNumber -= blocchi_di_scarto;
+	    
+	    reader.close();
 		
 	}
 
@@ -134,7 +151,9 @@ public class BlockReader {
 		
 		File f = null;
 		
-		f = new File("resources/CountWord/file_parole.txt");
+		
+		
+		f = new File(this.inputPath);
 		
 		//System.out.println("lunghezza_file:"+f.length());
 		
@@ -145,7 +164,25 @@ public class BlockReader {
 	
 	public static void main(String[] args) throws IOException
 	{
-		BlockReader blockreader = new BlockReader("resources/CountWord/file_parole.txt",25);
+		String cartella = "resources/CountWord/";
+		
+		File cartellaCorrente = new File(cartella);
+
+		File files[]=cartellaCorrente.listFiles();	
+		
+		for( File f : files ){		
+
+		    String nomeFile = f.getName();
+  
+                                     
+		System.out.println("Elaborazione a blocchi del percorso: "+nomeFile+"\n");
+		//}
+		
+		
+		BlockReader blockreader = new BlockReader(cartella+nomeFile,25);
+		
+		
+		//BlockReader blockreader = new BlockReader("resources/CountWord/file_parole.txt",25);
 		
 		int n_blocchi = blockreader.getTotalBlockNumber();
 		
@@ -169,6 +206,10 @@ public class BlockReader {
 		}
 		
 		System.out.println("Esecuzione terminata \n");
+		
+		blockreader.reader.close();
+		
+		}//fine for files
 		  
 	}
 }
