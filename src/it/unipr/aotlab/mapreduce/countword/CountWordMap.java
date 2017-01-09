@@ -9,8 +9,19 @@ import java.util.Map.Entry;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 
+
+
+/**
+ * @author Vittorio
+ *
+ * 
+ */
 public class CountWordMap implements MapJob {
 
+	/**
+	  * {@inheritDoc}
+	  */
+	
 	@Override
 	public void execute(String line, Context context) throws Exception {
 		// TODO Auto-generated method stub

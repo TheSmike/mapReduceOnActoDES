@@ -1,12 +1,16 @@
 package it.unipr.aotlab.mapreduce.resources;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/**
+ * 
+ * {@code NewLinesReader} 
+ * class define a special reader that read a block of file
+ *
+ */
 public class NewLinesReader {
 	
 	protected RandomAccessFile reader;
@@ -15,11 +19,20 @@ public class NewLinesReader {
 	private int blockSize;
 	private int byte_letti;
 	private long pointer;
-	private int blockNumber;
+	//private int blockNumber;
 	private int startPosition;
 	//protected BufferedReader reader;
 	
-	//imposto un line reaer che legge un certo blocco di file
+	
+	/**
+	 * @param startPosition : the position where the block start, reading of the file
+	 * start at this position. The reading of the file end when {@code blockSize} 
+	 * is achieved
+	 * @param blockSize : specific the dimension of the block, this is an information of how how many
+	 * bytes a reader of the block can read.
+	 * @param file : file to read
+	 * @throws IOException
+	 */
 	public NewLinesReader(int startPosition, int blockSize, File file) throws IOException {
 		this.fileToRead = file;
 		reader = null;
@@ -192,7 +205,15 @@ public class NewLinesReader {
 		
 	}
 
-	//dopo che ho settato il line reader leggo la linea
+	
+	/**
+	 * 
+	 * This method read line by line the file and a string is return value, this value is 
+	 * equal to null if position of the end of block is exceeded after a line was read
+	 * 
+	 * @return String that was read or null if end of block is exceeded.
+	 * @throws IOException
+	 */
 	public String readLine() throws IOException {
 		// implementazione del reader
 		

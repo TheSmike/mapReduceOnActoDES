@@ -14,6 +14,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+/**
+ * 
+ *
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class MapContext implements Context {
 
@@ -41,6 +45,13 @@ public class MapContext implements Context {
 		}
 	}
 
+	/**
+	 * 
+	 * build a structure key - list of values creating a group of key-value pair and
+	 * create by this group a key - list of values association. After that operation
+	 * write this output on a file
+	 * 
+	 */
 	private synchronized void writeInFile() {
 		try {
 			System.out.println(this.toString());
@@ -99,6 +110,12 @@ public class MapContext implements Context {
 		
 	}
 
+	/**
+	 * 
+	 * Make the sort operation with all files generated with map operation and create
+	 * a final sorted file with the "sort operation" after the "map operation"
+	 * 
+	 */
 	public void sortAll() {
 		writeInFile();
 		actualSize = 0;

@@ -11,10 +11,13 @@ import it.unipr.aotlab.mapreduce.action.Reduce;
 
 /**
  *
- * The {@code QWorkerer} class defines a behavior that waits for messages from a
+ * The {@code Worker} class defines a behavior that waits for messages from a
  * {@code Master} actor until it receives a {@code KILL} message.
  *
  * When it happens it kills itself.
+ * 
+ * Define also a {@code mapCase} and {@code reduceCase} that are build to determinate the map message or
+ * reduce message
  *
  * @see Master
  *

@@ -7,6 +7,20 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * 
+ * The class {@code BlockReader} has the purpose to split the inputfile in some blocks
+ * and calculate how many blocks are needed to read the inputfile, this is achieved with
+ * the definition of fixed lenght blocks based on total lenght of file. By the way one 
+ * block cannot end in the middle of one line, in fact we need to using block that end
+ * at the end of a line of file.
+ *
+ */
+/**
+ * @author Vittorio
+ *
+ */
 public class BlockReader {
 	private String inputPath; // folder or file path
 	private int totalBlockNumber;
@@ -14,7 +28,29 @@ public class BlockReader {
 	private List<Integer> startPosition_list;
 	protected RandomAccessFile reader;
 
-	//costruttore
+	
+	/**
+	 *
+	 * Class Constructor
+	 * 
+	 * In the constructor there are and Algorithm that calculate the starting point
+	 * of each block with this correction: if block with fixed length end at the middle 
+	 * of one line, the dimension of block was modified adding some length at the 
+	 * actual dimension of the block
+	 * that we need for read completely the line.
+	 * We did this correction for every block. After this algorithm may happen this 
+	 * situation: {@code totalBlockNumber} can be less then at the start of algorithm,
+	 * so the number of blocks that we used to perform the lecture of the file in blocks
+	 * was reduced.
+	 * 
+	 * @param inputPath : The inputpath of file that we want to split in blocks
+	 * @param blockSize : The size of fixed length block that we want to split
+	 * the file
+	 * 
+	 * @throws IOException
+	 * 
+	 * 
+	 */
 	public BlockReader(String inputPath, int blockSize) throws IOException {
 		this.inputPath = inputPath;
 		this.blockSize = blockSize;
@@ -22,7 +58,6 @@ public class BlockReader {
 		
 		//conteggio blocchi
 		int dim_file = (int)new File(inputPath).length();
-		
 		
 		int num_blocchi = dim_file/this.blockSize;
 
@@ -55,15 +90,12 @@ public class BlockReader {
 	      
 	    	startPosition = 0;
 	    	
-	    
-	    	 
+	     
 	      }
 	      else
 	      {
 	    	  //System.out.println("startposition senza blocksize = "+startPosition);
 	    	  reader.seek(startPosition+blockSize);
-	    	  
-	    	 
 
 	  		//salvo il puntatore corrente di lettura file
 	  		long pointer = reader.getFilePointer();
@@ -156,10 +188,24 @@ public class BlockReader {
 		
 	}
 
+	/**
+	 * @return {@code totalBlockNumber}  is equal to the number of total blocks needed to read the file
+	 * in blocks
+	 */
 	public int getTotalBlockNumber() {
 		return totalBlockNumber;
 	}
 
+	/**
+	 * @param blockNumber : block with a specific number that we specific the operation of
+	 * the {@code NewLinesReader} 
+	 * 
+	 * @return create a new istance of NewLinesReader with start position of the reading
+	 * point and the blocksize of  fixed length block, that is necessary for a method in this
+	 * class to know when the dimension of fixed block was  achieved in the reading
+	 * operation
+	 * @throws IOException
+	 */
 	public NewLinesReader getInputLinesReader(int blockNumber) throws IOException {
 		// todo in base al blockNumber restituisce un oggetto che legge dal byte
 		// X al byte Y oppure al blockSize
@@ -171,14 +217,20 @@ public class BlockReader {
 		
 		f = new File(this.inputPath);
 		
-		//System.out.println("lunghezza_file:"+f.length());
-		
 		//return new NewLinesReader(blockNumber,blockSize,f);
 		//System.out.println("BLOCCO :"+ blockNumber + " startPosition: "+ startPosition_list.get(blockNumber));
 		return new NewLinesReader(startPosition_list.get(blockNumber), blockSize, f );
 		
 	}
 	
+	/**
+	 * 
+	 * Read files in a specific folder and read them after they are splitted in blocks
+	 * 
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException
 	{
 		String cartella = "resources/CountWord/";

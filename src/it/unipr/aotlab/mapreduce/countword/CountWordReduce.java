@@ -9,6 +9,10 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 public class CountWordReduce implements ReduceJob {
 
+	/**
+	  * {@inheritDoc}
+	  */
+	
 	@Override
 	public void execute(String key, List<String> values, Context context) throws Exception {
 		// TODO Auto-generated method stub

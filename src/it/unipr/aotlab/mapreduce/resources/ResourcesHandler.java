@@ -9,6 +9,13 @@ import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapContext;
 import it.unipr.aotlab.mapreduce.context.MapFileContext;
 
+/**
+ * 
+ * 
+ * This class use some information for handle the operation of map/reduce in a particular
+ * directory.
+ *
+ */
 public class ResourcesHandler {
 
 	private final String tmpPath;
@@ -20,6 +27,14 @@ public class ResourcesHandler {
 	private final Context mapOutputContext;
 	private final Context reduceContext;
 	
+	/**
+	 * 
+	 * Class constructor
+	 * 
+	 * @param inputPath : path of the input directory
+	 * @param outputPath : path of the output directory
+	 * @param blockSize : the size of the block where the single file is splitted
+	 */
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
 		this.inputPath = inputPath;
@@ -42,25 +57,38 @@ public class ResourcesHandler {
 
 	/**
 	 * 
-	 * @param blockNumber
-	 * @return
+	 * @param blockNumber: the number of the block that identify a piece of file
+	 * @return new instance of {@code InputLinesReader}
 	 */
 	public InputLinesReader getInputLinesReader(int blockNumber) {
 		return new InputLinesReader(inputFiles.get(blockNumber), blockSize);
 	}
 
+	/**
+	 * @return OutputContext for map operation
+	 */
 	public Context getMapContext() {
 		return mapOutputContext;
 	}
 
+	/**
+	 * @return 
+	 */
 	public int countReduceBlocks() {
 		return this.sortedFiles.size();
 	}
 
+	/**
+	 * @param blockNumber : the number of the block that identify a piece of file
+	 * @return
+	 */
 	public SortedLinesReader getSortedLinesReader(int blockNumber) {
 		return new SortedLinesReader(sortedFiles.get(blockNumber), this.blockSize);
 	}
 
+	/**
+	 * @return
+	 */
 	public Context getReduceContext() {
 		return reduceContext;
 	}

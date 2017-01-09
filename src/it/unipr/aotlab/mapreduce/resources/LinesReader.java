@@ -6,11 +6,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * 
+ * This class define a LineReader which aims to read the file line by line with the limit
+ * specified by {@code blockSize}
+ *
+ */
 public abstract class LinesReader implements AutoCloseable {
 
 	private File fileToRead;
 	protected BufferedReader reader;
 
+	/**
+	 * Class Constructor
+	 * 
+	 * @param file : input file that we need to read
+	 * @param blockSize : limit of the reading operation defined with a blocksize
+	 * that specify how may bytes can be read with the FileReader.
+	 */
 	public LinesReader(File file, int blockSize) {
 		this.fileToRead = file;
 		reader = null;

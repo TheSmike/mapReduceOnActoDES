@@ -117,6 +117,14 @@ public final class Master extends Behavior {
 		rh.sortAndGroup();
 	}
 
+	/**
+	 * 
+	 * This method send a kill message at all worker that are alive, after that
+	 * application is end.
+	 * 
+	 * @param workers : Reference of workers
+	 * @return 
+	 */
 	private Behavior stopApplication(Reference[] workers) {
 		// stop application
 		for (int i = 0; i < this.workerNum; i++) {
@@ -124,7 +132,15 @@ public final class Master extends Behavior {
 		}
 		return Shutdown.INSTANCE;
 	}
+	
 
+	/**
+	 * 
+	 * send a message to all worker available to do a map function on a specific block
+	 * different for each one.
+	 * 
+	 * @param workers : Reference of workers
+	 */
 	private void launchAllMapWorker(Reference[] workers) {
 		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
 			System.out.println("ask to workers[" + this.currentWorkerIdx + "] to map");
@@ -132,12 +148,22 @@ public final class Master extends Behavior {
 		}
 	}
 
+	/**
+	 * @param m = message of type mapcase
+	 */
 	private void launchMapWorker(Message m) {
 		// assign another block to this worker
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to map");
 		future(m, getMapFunction(mapBlocksCount++), process);
 	}
 
+	/**
+	 * 
+	 * contact N worker available for N block that are necessary for perform
+	 * the reduce function.
+	 * 
+	 * @param workers : Reference of workers
+	 */
 	private void launchAllReduceWorker(Reference[] workers) {
 		// All workers have ended Map fucntion, start with Reduce function
 		this.reduceBlocksCount = 0;
@@ -151,20 +177,45 @@ public final class Master extends Behavior {
 		}
 	}
 
+	/**
+	 * 
+	 * that method send a message to a worker for performing the reduce function
+	 * 
+	 * @param m = message for lunch reduce worker
+	 */
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
 		future(m, getReduceFunction(reduceBlocksCount++), process);
 	}
 
+	/**
+	 * @param reduceBlock : number of reduce block
+	 * @return  a new reduce instance for performing the reduce operation on a particular
+	 * block
+	 */
 	private Reduce getReduceFunction(int reduceBlock) {
 		return new Reduce(this.rh, reduceBlock, this.reduceJob);
 	}
 
+	/**
+	 * @param mapBlock : number of block that we want to perform mapfunction
+	 * @return  new instance of Map operation
+	 */
 	private Map getMapFunction(int mapBlock) {
 		return new Map(this.rh, mapBlock, this.mapJob);
 	}
 
+	/**
+	 * @param v : v got 6 arguments (check if argument is 6)
+	 * v[0] = number of workers (check if the number of workers is valid (>=1)
+	 * v[1] = input path that contain file or directory (check if is null)
+	 * v[2] = output path that contain file or directory (check if is null)
+	 * v[3] = size of the block of the map/reduce operation (check if is >=1)
+	 * v[4] = mapJob
+	 * v[5] = reduceJob
+	 * @return
+	 */
 	private boolean checkInputValidity(Object[] v) {
 		try {
 			if (v.length != 6)

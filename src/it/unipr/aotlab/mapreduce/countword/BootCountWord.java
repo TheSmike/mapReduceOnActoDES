@@ -11,6 +11,10 @@ import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 
+/**
+ * Launch the application with files inside the "Countword" folder
+ *
+ */
 public class BootCountWord {
 	public static void main(String[] args) {
 		// params
