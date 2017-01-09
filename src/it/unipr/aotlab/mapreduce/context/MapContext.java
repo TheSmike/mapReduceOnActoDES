@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -57,24 +59,25 @@ public class MapContext implements Context {
 			System.out.println(this.toString());
 			// create new Context from mapContext where values are grouped by
 			// key
-			Map<Object, List> mappa = new TreeMap<>();
+			TreeMap<String, List> mappa = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 			for (Entry entry : this.bufferedList) {
 				if (mappa.containsKey(entry.getKey())) {
 					mappa.get(entry.getKey()).add(entry.getValue());
 				} else {
 					List tmpList = new ArrayList<>();
 					tmpList.add(entry.getValue());
-					mappa.put(entry.getKey(), tmpList);
+					mappa.put((String)entry.getKey(), tmpList);
 				}
 			}
-
+			System.out.println(mappa);
 			File file = new File(tmpPath + "tmp" + fileIdx++ + ".txt");
 			file.getParentFile().mkdirs();
 			if (!file.exists())
 				file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
-			for (Entry<Object, List> entry : mappa.entrySet()) {
+			for (Entry<String, List> entry : mappa.entrySet()) {
+				System.out.println(entry.getKey());
 				bw.write(entry.getKey() + " ");
 				List values = entry.getValue();
 				for (Object object : values) {
