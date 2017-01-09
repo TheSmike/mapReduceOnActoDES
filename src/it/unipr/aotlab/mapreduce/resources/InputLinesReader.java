@@ -4,14 +4,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class InputLinesReader extends LinesReader {
-
-	public InputLinesReader(File file, int blockSize) {
-		super(file, blockSize);
+	public InputLinesReader(int startPosition, int blockSize, File file) {
+		super(startPosition, blockSize, file);
 	}
 
-	public String readLine() {
+	public String readLine(){
 		try {
-			return super.reader.readLine();
+			return read();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

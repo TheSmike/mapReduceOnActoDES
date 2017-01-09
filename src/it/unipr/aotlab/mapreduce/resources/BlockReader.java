@@ -206,7 +206,7 @@ public class BlockReader {
 	 * operation
 	 * @throws IOException
 	 */
-	public NewLinesReader getInputLinesReader(int blockNumber) throws IOException {
+	public InputLinesReader getInputLinesReader(int blockNumber) throws IOException {
 		// todo in base al blockNumber restituisce un oggetto che legge dal byte
 		// X al byte Y oppure al blockSize
 		//int inizio_lettura = blockNumber*blockSize;
@@ -219,9 +219,37 @@ public class BlockReader {
 		
 		//return new NewLinesReader(blockNumber,blockSize,f);
 		//System.out.println("BLOCCO :"+ blockNumber + " startPosition: "+ startPosition_list.get(blockNumber));
-		return new NewLinesReader(startPosition_list.get(blockNumber), blockSize, f );
+		return new InputLinesReader(startPosition_list.get(blockNumber), blockSize, f );
 		
 	}
+
+	/**
+	 * @param blockNumber : block with a specific number that we specific the operation of
+	 * the {@code NewLinesReader} 
+	 * 
+	 * @return create a new istance of NewLinesReader with start position of the reading
+	 * point and the blocksize of  fixed length block, that is necessary for a method in this
+	 * class to know when the dimension of fixed block was  achieved in the reading
+	 * operation
+	 * @throws IOException
+	 */
+	public SortedLinesReader getSortedLinesReader(int blockNumber) throws IOException {
+		// todo in base al blockNumber restituisce un oggetto che legge dal byte
+		// X al byte Y oppure al blockSize
+		//int inizio_lettura = blockNumber*blockSize;
+		
+		File f = null;
+		
+		
+		
+		f = new File(this.inputPath);
+		
+		//return new NewLinesReader(blockNumber,blockSize,f);
+		//System.out.println("BLOCCO :"+ blockNumber + " startPosition: "+ startPosition_list.get(blockNumber));
+		return new SortedLinesReader(startPosition_list.get(blockNumber), blockSize, f );
+		
+	}
+
 	
 	/**
 	 * 
@@ -260,7 +288,7 @@ public class BlockReader {
 		for(int i = 0; i < blockreader.totalBlockNumber; i++)
 		{
 		
-		 NewLinesReader line_reader = blockreader.getInputLinesReader(i);
+		 InputLinesReader line_reader = blockreader.getInputLinesReader(i);
 		  
 		  String line;
 		

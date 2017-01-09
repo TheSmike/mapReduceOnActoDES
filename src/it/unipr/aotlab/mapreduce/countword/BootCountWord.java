@@ -19,7 +19,7 @@ public class BootCountWord {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;
-		final int blockSize = 1024;
+		final int blockSize = 10;
 		final String inputPath = "resources/CountWord/";
 		final String outputPath = "output/CountWord/";
 		final MapJob mapJob = new CountWordMap();

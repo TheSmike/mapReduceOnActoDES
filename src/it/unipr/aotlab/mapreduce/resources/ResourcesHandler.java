@@ -12,8 +12,8 @@ import it.unipr.aotlab.mapreduce.context.MapFileContext;
 /**
  * 
  * 
- * This class use some information for handle the operation of map/reduce in a particular
- * directory.
+ * This class use some information for handle the operation of map/reduce in a
+ * particular directory.
  *
  */
 public class ResourcesHandler {
@@ -22,26 +22,29 @@ public class ResourcesHandler {
 	private String inputPath;
 	private int blockSize;
 
-	private List<File> inputFiles;
-	private List<File> sortedFiles;
+	private TotalBlockReader inputBlockReader;
+	private TotalBlockReader sortedBlockReader;
 	private final Context mapOutputContext;
 	private final Context reduceContext;
-	
+
 	/**
 	 * 
 	 * Class constructor
 	 * 
-	 * @param inputPath : path of the input directory
-	 * @param outputPath : path of the output directory
-	 * @param blockSize : the size of the block where the single file is splitted
+	 * @param inputPath
+	 *            : path of the input directory
+	 * @param outputPath
+	 *            : path of the output directory
+	 * @param blockSize
+	 *            : the size of the block where the single file is splitted
 	 */
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
 		super();
 		this.inputPath = inputPath;
 		this.tmpPath = outputPath + "tmp" + getIndex() + "/";
 		this.blockSize = blockSize;
-		this.inputFiles = loadPaths(this.inputPath);
-		this.sortedFiles = null;
+		this.inputBlockReader = new TotalBlockReader(this.inputPath, blockSize);
+		this.sortedBlockReader = null;
 		this.mapOutputContext = new MapContext(this.tmpPath);
 		this.reduceContext = new MapFileContext(outputPath);
 	}
@@ -52,16 +55,17 @@ public class ResourcesHandler {
 	 * @return
 	 */
 	public int countMapBlocks() {
-		return inputFiles.size();
+		return this.inputBlockReader.getMapBlocks();
 	}
 
 	/**
 	 * 
-	 * @param blockNumber: the number of the block that identify a piece of file
+	 * @param blockNumber:
+	 *            the number of the block that identify a piece of file
 	 * @return new instance of {@code InputLinesReader}
 	 */
 	public InputLinesReader getInputLinesReader(int blockNumber) {
-		return new InputLinesReader(inputFiles.get(blockNumber), blockSize);
+		return inputBlockReader.getInputLinesReader(blockNumber);
 	}
 
 	/**
@@ -72,18 +76,19 @@ public class ResourcesHandler {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 */
 	public int countReduceBlocks() {
-		return this.sortedFiles.size();
+		return this.sortedBlockReader.getMapBlocks();
 	}
 
 	/**
-	 * @param blockNumber : the number of the block that identify a piece of file
+	 * @param blockNumber
+	 *            : the number of the block that identify a piece of file
 	 * @return
 	 */
 	public SortedLinesReader getSortedLinesReader(int blockNumber) {
-		return new SortedLinesReader(sortedFiles.get(blockNumber), this.blockSize);
+		return sortedBlockReader.getSortedLinesReader(blockNumber);
 	}
 
 	/**
@@ -93,7 +98,7 @@ public class ResourcesHandler {
 		return reduceContext;
 	}
 
-	private static List<File> loadPaths(String path) {
+	private static List<File> oldLoadPaths(String path) {
 		List<File> retValue = new ArrayList<>();
 		File f = new File(path);
 		if (f.exists()) {
@@ -115,25 +120,26 @@ public class ResourcesHandler {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
 	public void deleteTmpFiles() {
 		File f = new File(tmpPath);
-//		File f2 = new File(f.getParentFile(), "/tmp"+ (new Date()).getTime() + "/");
-//		f2.mkdir();
+		// File f2 = new File(f.getParentFile(), "/tmp"+ (new Date()).getTime()
+		// + "/");
+		// f2.mkdir();
 		for (File file : f.listFiles()) {
 			file.delete();
-//			file.renameTo(new File(f2, file.getName()));
+			// file.renameTo(new File(f2, file.getName()));
 		}
-		
+
 	}
 
 	public void sortAndGroup() {
-		((MapContext)mapOutputContext).sortAll();
-		sortedFiles = loadPaths(tmpPath + "/sorted");
+		((MapContext) mapOutputContext).sortAll();
+		sortedBlockReader = new TotalBlockReader(tmpPath + "/sorted", blockSize);
 	}
-	
+
 	private long getIndex() {
 		// TODO Auto-generated method stub
 		return (new Date().getTime());

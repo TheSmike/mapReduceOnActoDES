@@ -1,20 +1,22 @@
-package it.unipr.aotlab.mapreduce.resources;
+package it.unipr.aotlab.mapreduce.resources.oldreaders;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.unipr.aotlab.mapreduce.resources.SortedLine;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
-public class SortedLinesReader extends LinesReader {
-	public SortedLinesReader(int startPosition, int blockSize, File file) {
-		super(startPosition, blockSize, file);
+public class SortedSequentialLinesReader extends SequentiallyLinesReader {
+
+	public SortedSequentialLinesReader(File file, int blockSize) {
+		super(file, blockSize);
 	}
 
 	public SortedLine readLine() {
 		try {
-			String line = super.read();
+			String line = super.reader.readLine();
 			if(StrUtils.isEmpty(line))
 				return null;
 			

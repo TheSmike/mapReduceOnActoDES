@@ -21,7 +21,7 @@ import java.util.TreeMap;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class MapContext implements Context {
 
-	private static int MAX_FILE_SIZE = 1024*10;
+	private static int MAX_FILE_SIZE = 1024 * 10;
 	private List<Entry> bufferedList;
 	private long actualSize;
 	private int fileIdx = 0;
@@ -47,9 +47,9 @@ public class MapContext implements Context {
 
 	/**
 	 * 
-	 * build a structure key - list of values creating a group of key-value pair and
-	 * create by this group a key - list of values association. After that operation
-	 * write this output on a file
+	 * build a structure key - list of values creating a group of key-value pair
+	 * and create by this group a key - list of values association. After that
+	 * operation write this output on a file
 	 * 
 	 */
 	private synchronized void writeInFile() {
@@ -107,20 +107,21 @@ public class MapContext implements Context {
 
 	@Override
 	public void close() throws Exception {
-		
+
 	}
 
 	/**
 	 * 
-	 * Make the sort operation with all files generated with map operation and create
-	 * a final sorted file with the "sort operation" after the "map operation"
+	 * Make the sort operation with all files generated with map operation and
+	 * create a final sorted file with the "sort operation" after the "map
+	 * operation"
 	 * 
 	 */
 	public void sortAll() {
 		writeInFile();
 		actualSize = 0;
 		bufferedList.clear();
-		
+
 		BufferedWriter bw = null;
 		try {
 			File dir = new File(tmpPath);
@@ -135,7 +136,7 @@ public class MapContext implements Context {
 				// foreach headline select minor and memorize associated
 				// HeadFile
 				for (HeadFile headFile : fileHeads) {
-					if (headFile.fileNotEnded() ) {
+					if (headFile.fileNotEnded()) {
 						String line = headFile.getLastReadedLine().split(" ")[0];
 						if (lower == null || line.compareTo(lower) < 0) {
 							lower = line;
@@ -147,6 +148,7 @@ public class MapContext implements Context {
 				pointer.nextLine();
 
 			}
+			writeLastValue(bw);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -161,27 +163,36 @@ public class MapContext implements Context {
 		}
 	}
 
+	private void writeLastValue(BufferedWriter bw) {
+		try {
+			bw.write(lastReadedKey + " " + lastReadedKeyValues);
+			bw.write("\n");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private String lastReadedKey = null;
 	private String lastReadedKeyValues = "";
-	
+
 	private void writeSorted(BufferedWriter bw, String lastReadedLine) {
 		try {
 			String[] values = lastReadedLine.split(" ", 2);
 			if (lastReadedKey == null)
 				lastReadedKey = values[0];
-			
-			if (!values[0].equals(lastReadedKey)){
+
+			if (!values[0].equals(lastReadedKey)) {
 				bw.write(lastReadedKey + " " + lastReadedKeyValues);
 				bw.write("\n");
 				lastReadedKey = values[0];
 				lastReadedKeyValues = values[1];
-			}else{
+			} else {
 				lastReadedKeyValues += values[1];
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
 	/**
