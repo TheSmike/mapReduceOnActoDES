@@ -9,10 +9,11 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 public class CountWordReduce implements ReduceJob {
 
+	int righeLette = 0; 
+	
 	/**
 	  * {@inheritDoc}
 	  */
-	
 	@Override
 	public void execute(String key, List<String> values, Context context) throws Exception {
 		// TODO Auto-generated method stub
@@ -23,7 +24,7 @@ public class CountWordReduce implements ReduceJob {
 			subtotale += Integer.parseInt(s);
 		}
 		
-		System.out.println("Totale count:"+ subtotale + "\n");
+//		System.out.println("Totale count:"+ subtotale);
 		
 		context.put(key,subtotale);
 

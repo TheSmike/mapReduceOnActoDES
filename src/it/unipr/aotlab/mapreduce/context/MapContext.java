@@ -56,7 +56,7 @@ public class MapContext implements Context {
 	 */
 	private synchronized void writeInFile() {
 		try {
-			System.out.println(this.toString());
+			// System.out.println(this.toString());
 			// create new Context from mapContext where values are grouped by
 			// key
 			TreeMap<String, List> mappa = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -66,10 +66,10 @@ public class MapContext implements Context {
 				} else {
 					List tmpList = new ArrayList<>();
 					tmpList.add(entry.getValue());
-					mappa.put((String)entry.getKey(), tmpList);
+					mappa.put((String) entry.getKey(), tmpList);
 				}
 			}
-			System.out.println(mappa);
+			// System.out.println(mappa);
 			File file = new File(tmpPath + "tmp" + fileIdx++ + ".txt");
 			file.getParentFile().mkdirs();
 			if (!file.exists())
@@ -77,7 +77,7 @@ public class MapContext implements Context {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
 			for (Entry<String, List> entry : mappa.entrySet()) {
-				System.out.println(entry.getKey());
+				// System.out.println(entry.getKey());
 				bw.write(entry.getKey() + " ");
 				List values = entry.getValue();
 				for (Object object : values) {
@@ -132,21 +132,32 @@ public class MapContext implements Context {
 			ArrayList<HeadFile> fileHeads = initAllReaders(files);
 			File sortedFile = new File(dir, "sorted/tmp.txt");
 			sortedFile.getParentFile().mkdir();
-			bw = new BufferedWriter(new FileWriter(new File(dir, "sorted/tmp.txt")));
+			bw = new BufferedWriter(new FileWriter(sortedFile));
 			while (otherLines(fileHeads)) {
 				String lower = null;
 				HeadFile pointer = null;
 				// foreach headline select minor and memorize associated
 				// HeadFile
+				int index = 0;
+				int selectedIndex = 0;
 				for (HeadFile headFile : fileHeads) {
+
 					if (headFile.fileNotEnded()) {
 						String line = headFile.getLastReadedLine().split(" ")[0];
-						if (lower == null || line.compareTo(lower) < 0) {
+//						System.out.println("file " + index + ":" + line);
+//						if (lower != null)
+//							System.out.println("compare " + line + "-" + lower + "="
+//									+ String.CASE_INSENSITIVE_ORDER.compare(line, lower));
+//						System.out.println("lower=" + lower);
+						if (lower == null || String.CASE_INSENSITIVE_ORDER.compare(line, lower) < 0) {
 							lower = line;
 							pointer = headFile;
+							selectedIndex = index;
 						}
+						index++;
 					}
 				}
+//				System.out.println("selected file " + selectedIndex + ":" + pointer.getLastReadedLine() + "\n");
 				writeSorted(bw, pointer.getLastReadedLine());
 				pointer.nextLine();
 
@@ -184,7 +195,7 @@ public class MapContext implements Context {
 			if (lastReadedKey == null)
 				lastReadedKey = values[0];
 
-			if (!values[0].equals(lastReadedKey)) {
+			if (String.CASE_INSENSITIVE_ORDER.compare(values[0], lastReadedKey) != 0) {
 				bw.write(lastReadedKey + " " + lastReadedKeyValues);
 				bw.write("\n");
 				lastReadedKey = values[0];
