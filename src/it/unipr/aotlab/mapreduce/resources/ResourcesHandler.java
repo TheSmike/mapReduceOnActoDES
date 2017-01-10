@@ -37,15 +37,17 @@ public class ResourcesHandler {
 	 *            : path of the output directory
 	 * @param blockSize
 	 *            : the size of the block where the single file is splitted
+	 * @param bufferedContextSize 
+	 * 			  : size of buffered input Context in memory, if size exceeds the buffer is write in file and emptied
 	 */
-	public ResourcesHandler(String inputPath, String outputPath, int blockSize) {
+	public ResourcesHandler(String inputPath, String outputPath, int blockSize, int bufferedContextSize) {
 		super();
 		this.inputPath = inputPath;
 		this.tmpPath = outputPath + "tmp" + getIndex() + "/";
 		this.blockSize = blockSize;
 		this.inputBlockReader = new TotalBlockReader(this.inputPath, blockSize);
 		this.sortedBlockReader = null;
-		this.mapOutputContext = new MapContext(this.tmpPath);
+		this.mapOutputContext = new MapContext(this.tmpPath, bufferedContextSize);
 		this.reduceContext = new MapFileContext(outputPath);
 	}
 

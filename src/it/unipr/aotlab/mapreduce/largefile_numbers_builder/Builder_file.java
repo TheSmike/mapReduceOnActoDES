@@ -24,10 +24,11 @@ public class Builder_file {
 	       // System.out.print(alphabet.charAt(r.nextInt(N)));
 	  //  }
 		    //Size in Gbs of my file that I want
-		    double wantedSize = Double.parseDouble(System.getProperty("size", "1.0"));
+		    double wantedSize = Double.parseDouble(System.getProperty("size", "0.3"));
 
 		    Random random = new Random();
-		    File file = new File("C:/Users/Vittorio/workspace/mapReduceOnActoDES/output/prova_file/AvgNumbers.txt");
+		    File file = new File("output/prova_file/AvgNumbers.txt");
+		    file.getParentFile().mkdirs();
 		    //File file = new File("prova_file/AvgNumbers.txt");
 		    long start = System.currentTimeMillis();
 		    PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")), false);

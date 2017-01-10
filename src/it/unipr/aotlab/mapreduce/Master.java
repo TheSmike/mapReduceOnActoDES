@@ -27,6 +27,7 @@ import it.unipr.aotlab.mapreduce.utils.StrUtils;
  */
 public final class Master extends Behavior {
 
+	private static final int BUFFERED_CONTEXT_DEFAULT_SIZE = 10 * 1024; //10Kb
 	// Current number of response.
 	private int responseCount;
 	// index of last invoked worker
@@ -71,7 +72,12 @@ public final class Master extends Behavior {
 		int blockSize = (int) v[3];
 		this.mapJob = (MapJob) v[4];
 		this.reduceJob = (ReduceJob) v[5];
-		this.rh = new ResourcesHandler(inputPath, outputPath, blockSize);
+		int bufferedContextSize;
+		if(v.length>6 && v[6] != null)
+			bufferedContextSize = (int) v[6];
+		else
+			bufferedContextSize = BUFFERED_CONTEXT_DEFAULT_SIZE;
+		this.rh = new ResourcesHandler(inputPath, outputPath, blockSize, bufferedContextSize);
 		// determine how many blocks needed
 		mapBlocksCount = 0;
 		maxMapBlocks = rh.countMapBlocks();
@@ -98,7 +104,7 @@ public final class Master extends Behavior {
 				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
 				rh.closeReduceContext();
-				//rh.deleteTmpFiles();
+				// rh.deleteTmpFiles();
 				return stopApplication(workers);
 			}
 
@@ -122,8 +128,9 @@ public final class Master extends Behavior {
 	 * This method send a kill message at all worker that are alive, after that
 	 * application is end.
 	 * 
-	 * @param workers : Reference of workers
-	 * @return 
+	 * @param workers
+	 *            : Reference of workers
+	 * @return
 	 */
 	private Behavior stopApplication(Reference[] workers) {
 		// stop application
@@ -132,14 +139,14 @@ public final class Master extends Behavior {
 		}
 		return Shutdown.INSTANCE;
 	}
-	
 
 	/**
 	 * 
-	 * send a message to all worker available to do a map function on a specific block
-	 * different for each one.
+	 * send a message to all worker available to do a map function on a specific
+	 * block different for each one.
 	 * 
-	 * @param workers : Reference of workers
+	 * @param workers
+	 *            : Reference of workers
 	 */
 	private void launchAllMapWorker(Reference[] workers) {
 		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
@@ -149,7 +156,8 @@ public final class Master extends Behavior {
 	}
 
 	/**
-	 * @param m = message of type mapcase
+	 * @param m
+	 *            = message of type mapcase
 	 */
 	private void launchMapWorker(Message m) {
 		// assign another block to this worker
@@ -159,10 +167,11 @@ public final class Master extends Behavior {
 
 	/**
 	 * 
-	 * contact N worker available for N block that are necessary for perform
-	 * the reduce function.
+	 * contact N worker available for N block that are necessary for perform the
+	 * reduce function.
 	 * 
-	 * @param workers : Reference of workers
+	 * @param workers
+	 *            : Reference of workers
 	 */
 	private void launchAllReduceWorker(Reference[] workers) {
 		// All workers have ended Map fucntion, start with Reduce function
@@ -181,7 +190,8 @@ public final class Master extends Behavior {
 	 * 
 	 * that method send a message to a worker for performing the reduce function
 	 * 
-	 * @param m = message for lunch reduce worker
+	 * @param m
+	 *            = message for lunch reduce worker
 	 */
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
@@ -190,36 +200,38 @@ public final class Master extends Behavior {
 	}
 
 	/**
-	 * @param reduceBlock : number of reduce block
-	 * @return  a new reduce instance for performing the reduce operation on a particular
-	 * block
+	 * @param reduceBlock
+	 *            : number of reduce block
+	 * @return a new reduce instance for performing the reduce operation on a
+	 *         particular block
 	 */
 	private Reduce getReduceFunction(int reduceBlock) {
 		return new Reduce(this.rh, reduceBlock, this.reduceJob);
 	}
 
 	/**
-	 * @param mapBlock : number of block that we want to perform mapfunction
-	 * @return  new instance of Map operation
+	 * @param mapBlock
+	 *            : number of block that we want to perform mapfunction
+	 * @return new instance of Map operation
 	 */
 	private Map getMapFunction(int mapBlock) {
 		return new Map(this.rh, mapBlock, this.mapJob);
 	}
 
 	/**
-	 * @param v : v got 6 arguments (check if argument is 6)
-	 * v[0] = number of workers (check if the number of workers is valid (>=1)
-	 * v[1] = input path that contain file or directory (check if is null)
-	 * v[2] = output path that contain file or directory (check if is null)
-	 * v[3] = size of the block of the map/reduce operation (check if is >=1)
-	 * v[4] = mapJob
-	 * v[5] = reduceJob
+	 * @param v
+	 *            : v got 6 arguments (check if argument is 6) v[0] = number of
+	 *            workers (check if the number of workers is valid (>=1) v[1] =
+	 *            input path that contain file or directory (check if is null)
+	 *            v[2] = output path that contain file or directory (check if is
+	 *            null) v[3] = size of the block of the map/reduce operation
+	 *            (check if is >=1) v[4] = mapJob v[5] = reduceJob
 	 * @return
 	 */
 	private boolean checkInputValidity(Object[] v) {
 		try {
-			if (v.length != 6)
-				throw new InitializeException("6 required parameters for the program");
+			if (v.length < 6)
+				throw new InitializeException("At least 6 required parameters for the program");
 			if ((int) v[0] <= 0)
 				throw new InitializeException("You need to specify minimum of 1 worker");
 			if (StrUtils.isEmpty((String) v[1]))
@@ -232,6 +244,7 @@ public final class Master extends Behavior {
 				throw new InitializeException("expected 5th parameter as MapJob");
 			if (v[5] == null && !(v[5] instanceof ReduceJob))
 				throw new InitializeException("expected 6th parameter as ReduceJob");
+			// v[6] optional
 		} catch (InitializeException e) {
 			System.err.println(e.getMessage());
 			return false;

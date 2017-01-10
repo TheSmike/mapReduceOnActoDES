@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,13 +21,14 @@ import java.util.TreeMap;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class MapContext implements Context {
 
-	private static int MAX_FILE_SIZE = 1024 * 10;
+	private final int bufferedContextSize;
 	private List<Entry> bufferedList;
 	private long actualSize;
 	private int fileIdx = 0;
 	private final String tmpPath;
 
-	public MapContext(String tmpPath) {
+	public MapContext(String tmpPath, int bufferedContextSize) {
+		this.bufferedContextSize = bufferedContextSize;
 		this.tmpPath = tmpPath;
 		bufferedList = new ArrayList<>();
 		fileIdx = 0;
@@ -40,7 +39,7 @@ public class MapContext implements Context {
 		Entry newEntry = new MyEntry(key, value);
 		actualSize += key.toString().length() + value.toString().length() + 1;
 		bufferedList.add(newEntry);
-		if (actualSize >= MAX_FILE_SIZE) {
+		if (actualSize >= bufferedContextSize) {
 			writeInFile();
 			actualSize = 0;
 			bufferedList.clear();
@@ -56,7 +55,6 @@ public class MapContext implements Context {
 	 */
 	private synchronized void writeInFile() {
 		try {
-			// System.out.println(this.toString());
 			// create new Context from mapContext where values are grouped by
 			// key
 			TreeMap<String, List> mappa = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -69,7 +67,6 @@ public class MapContext implements Context {
 					mappa.put((String) entry.getKey(), tmpList);
 				}
 			}
-			// System.out.println(mappa);
 			File file = new File(tmpPath + "tmp" + fileIdx++ + ".txt");
 			file.getParentFile().mkdirs();
 			if (!file.exists())
@@ -77,7 +74,6 @@ public class MapContext implements Context {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
 			for (Entry<String, List> entry : mappa.entrySet()) {
-				// System.out.println(entry.getKey());
 				bw.write(entry.getKey() + " ");
 				List values = entry.getValue();
 				for (Object object : values) {
@@ -139,25 +135,17 @@ public class MapContext implements Context {
 				// foreach headline select minor and memorize associated
 				// HeadFile
 				int index = 0;
-				int selectedIndex = 0;
 				for (HeadFile headFile : fileHeads) {
 
 					if (headFile.fileNotEnded()) {
 						String line = headFile.getLastReadedLine().split(" ")[0];
-//						System.out.println("file " + index + ":" + line);
-//						if (lower != null)
-//							System.out.println("compare " + line + "-" + lower + "="
-//									+ String.CASE_INSENSITIVE_ORDER.compare(line, lower));
-//						System.out.println("lower=" + lower);
 						if (lower == null || String.CASE_INSENSITIVE_ORDER.compare(line, lower) < 0) {
 							lower = line;
 							pointer = headFile;
-							selectedIndex = index;
 						}
 						index++;
 					}
 				}
-//				System.out.println("selected file " + selectedIndex + ":" + pointer.getLastReadedLine() + "\n");
 				writeSorted(bw, pointer.getLastReadedLine());
 				pointer.nextLine();
 
