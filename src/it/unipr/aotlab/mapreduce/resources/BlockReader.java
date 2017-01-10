@@ -59,7 +59,7 @@ public class BlockReader {
 		//conteggio blocchi
 		int dim_file = (int)new File(inputPath).length();
 		
-		int num_blocchi = dim_file/this.blockSize;
+		int num_blocchi = (dim_file/this.blockSize) +1;
 
 		this.totalBlockNumber = num_blocchi;
 		
@@ -261,7 +261,9 @@ public class BlockReader {
 	 */
 	public static void main(String[] args) throws IOException
 	{
-		String cartella = "resources/CountWord/";
+		//String cartella = "resources/CountWord/";
+		
+		String cartella = "output/prova_file/";
 		
 		File cartellaCorrente = new File(cartella);
 
@@ -276,7 +278,9 @@ public class BlockReader {
 		//}
 		
 		
-		BlockReader blockreader = new BlockReader(cartella+nomeFile,25);
+		//BlockReader blockreader = new BlockReader(cartella+nomeFile,25);
+		
+		BlockReader blockreader = new BlockReader(cartella+nomeFile,(25*1024*1024));
 		
 		
 		//BlockReader blockreader = new BlockReader("resources/CountWord/file_parole.txt",25);

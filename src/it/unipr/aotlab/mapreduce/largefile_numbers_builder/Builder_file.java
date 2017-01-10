@@ -1,4 +1,4 @@
-package it.unipr.aotlab.mapreduce.largefile_builder;
+package it.unipr.aotlab.mapreduce.largefile_numbers_builder;
 
 import java.io.BufferedWriter;
 import java.io.File;

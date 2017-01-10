@@ -21,6 +21,7 @@ public class BootMassiveCountWord {
 		final int workers = 3;
 		final int blockSize = 1024;
 		final String inputPath = "resources/CountWordMassive/";
+		//final String inputPath = "output/prova_file/";
 		final String outputPath = "output/CountWordMassive/";
 		final MapJob mapJob = new CountWordMap();
 		final ReduceJob reduceJob = new CountWordReduce();
