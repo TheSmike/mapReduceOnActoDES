@@ -9,6 +9,7 @@ import it.unipr.aotlab.actodes.interaction.Kill;
 import it.unipr.aotlab.actodes.runtime.Shutdown;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
+import it.unipr.aotlab.mapreduce.action.Sort;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.exception.InitializeException;
@@ -98,8 +99,12 @@ public final class Master extends Behavior {
 			if (mapBlocksCount < maxMapBlocks) {
 				launchMapWorker(m);
 			} else if (this.responseCount == this.maxMapBlocks) {
-				sortMapResult(workers);
+				//sortMapResult(workers);
+				launchSortWorker(m);
+			}else if (this.responseCount == this.maxMapBlocks +1){
+				
 				launchAllReduceWorker(workers);
+			
 			} else if (reduceBlocksCount < maxReduceBlocksCount) {
 				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
@@ -191,12 +196,23 @@ public final class Master extends Behavior {
 	 * that method send a message to a worker for performing the reduce function
 	 * 
 	 * @param m
-	 *            = message for lunch reduce worker
+	 *            = message for communicate at a worker to make the reduce function
 	 */
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
 		future(m, getReduceFunction(reduceBlocksCount++), process);
+	}
+	
+	
+	/**
+	 * @param m = message for communicate at a worker to do a sort function.
+	 * 
+	 */
+	private void launchSortWorker(Message m) {
+		//ask a worker to make the sort function
+		System.out.println("ask to workers[" + m.getSender().getName() + "] to make the sort operation");
+		future(m, getSortFunction(), process);
 	}
 
 	/**
@@ -216,6 +232,14 @@ public final class Master extends Behavior {
 	 */
 	private Map getMapFunction(int mapBlock) {
 		return new Map(this.rh, mapBlock, this.mapJob);
+	}
+	
+	/**
+	 * @return new instance of Sort: is equivalent to say "do the sort function"
+	 */
+	private Sort getSortFunction()
+	{
+		return new Sort(this.rh);
 	}
 
 	/**

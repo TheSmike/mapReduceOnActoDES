@@ -9,7 +9,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
-public class Builder_file {
+/**
+ * The class {@code Builder_file_with_numbers} create a random file with size chosen by the
+ * user, and fill it with number, that file is used for the test with map-reduce 
+ * case with numbers.
+ *
+ */
+public class Builder_file_with_numbers {
 
 	public static void main(String[] args)throws FileNotFoundException, UnsupportedEncodingException  {
 		// TODO Auto-generated method stub

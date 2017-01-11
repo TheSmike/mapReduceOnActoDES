@@ -17,10 +17,6 @@ import java.util.List;
  * at the end of a line of file.
  *
  */
-/**
- * @author Vittorio
- *
- */
 public class BlockReader {
 	private String inputPath; // folder or file path
 	private int totalBlockNumber;

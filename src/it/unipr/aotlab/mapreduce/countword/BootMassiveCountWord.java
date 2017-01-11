@@ -13,6 +13,9 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 /**
  * Launch the application with files inside the "CountWordMassive" folder
+ * 
+ * this is an example of map-reduce with strings, files in input are quite big (around 200Mb)
+ * so the example is very complicated, the execution of the program may be long.
  *
  */
 public class BootMassiveCountWord {

@@ -6,8 +6,8 @@ import java.io.RandomAccessFile;
 
 /**
  * 
- * {@code NewLinesReader} 
- * class define a special reader that read a block of file
+ * {@code LinesReader} 
+ * class define a special reader that read a block of file into an input file
  *
  */
 public abstract class LinesReader implements AutoCloseable {

@@ -12,7 +12,8 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
 
 /**
- * Launch the application with files inside the "Countword" folder
+ * Launch the application with files inside the "Countword" folder, this is an example
+ * of map-reduce with strings, files in input are very short, so the example is very simple
  *
  */
 public class BootCountWord {

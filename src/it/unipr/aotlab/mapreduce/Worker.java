@@ -8,6 +8,7 @@ import it.unipr.aotlab.actodes.filtering.constraint.IsInstance;
 import it.unipr.aotlab.actodes.interaction.Done;
 import it.unipr.aotlab.mapreduce.action.Map;
 import it.unipr.aotlab.mapreduce.action.Reduce;
+import it.unipr.aotlab.mapreduce.action.Sort;
 
 /**
  *
@@ -28,11 +29,17 @@ public final class Worker extends KillableBehavior {
 	private static final long serialVersionUID = 1L;
 	private static final MessagePattern MAPPATTERN = MessagePattern.contentPattern(new IsInstance(Map.class));
 	private static final MessagePattern REDUCEPATTERN = MessagePattern.contentPattern(new IsInstance(Reduce.class));
-
+	private static final MessagePattern SORTPATTERN = MessagePattern.contentPattern(new IsInstance(Sort.class));
+	
+	
+	
 	// Map function case.
 	private Case mapCase;
 	// Reduce function case.
 	private Case reduceCase;
+	// Sort function case
+	private Case sortCase;
+	
 	
 	/**
 	 * {@inheritDoc}
@@ -74,8 +81,23 @@ public final class Worker extends KillableBehavior {
 			return null;
 		};
 		
+		this.sortCase = (m) -> {
+			Sort sort = (Sort) m.getContent();
+			try{
+				sort.executeBlock();
+			} catch (Exception e) {
+				System.err.println("error in sorting phase: " + e.getMessage());
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			System.out.println(this.getReference().getName()+ " executed sort phase");
+			send(m, Done.DONE);
+			return null;
+		};
+		
 		b.bind(KILLPATTERN, this.killCase);
 		b.bind(MAPPATTERN, this.mapCase);
 		b.bind(REDUCEPATTERN, this.reduceCase);
+		b.bind(SORTPATTERN, this.sortCase);
 	}
 }
