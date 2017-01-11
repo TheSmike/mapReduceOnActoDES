@@ -8,6 +8,12 @@ import java.util.List;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 
+/**
+ * This class {@NumberMap} implement the map function with numbers.
+ * This function consist in read each line, create a <key,value> pair with 
+ * key = sum of the numbers in a line, and value = median of numbers in this line
+ *
+ */
 public class NumberMap implements MapJob {
 
 	@Override
@@ -33,8 +39,9 @@ public class NumberMap implements MapJob {
 		
 			//prelevo la stringa la converto in numero e metto tutto nella lista
 			int numero = Integer.parseInt(s);
+			//float numero = Float.parseFloat(s);
 			
-			numbers.add(numero);
+			numbers.add((int)numero);
 		}
 		
 		//2) nella lista ho tutti i numeri di una stringa ne formo quindi una coppia

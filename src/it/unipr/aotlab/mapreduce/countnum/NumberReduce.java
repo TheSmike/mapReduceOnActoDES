@@ -5,6 +5,12 @@ import java.util.List;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
+/**
+ * This class {@NumerReduce} implement the reduce function working with numbers.
+ * This function consist into create a <key, value> pair where key= sum of numbers
+ * in a line and the value = median of the median of previous values.
+ *
+ */
 public class NumberReduce implements ReduceJob {
 
 	@Override

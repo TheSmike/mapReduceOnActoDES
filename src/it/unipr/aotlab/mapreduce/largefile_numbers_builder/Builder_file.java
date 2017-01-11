@@ -24,10 +24,27 @@ public class Builder_file {
 	       // System.out.print(alphabet.charAt(r.nextInt(N)));
 	  //  }
 		    //Size in Gbs of my file that I want
-		    double wantedSize = Double.parseDouble(System.getProperty("size", "0.3"));
+		    double wantedSize = Double.parseDouble(System.getProperty("size", "0.2"));
 
 		    Random random = new Random();
-		    File file = new File("output/prova_file/AvgNumbers.txt");
+		    int scostamento = 0;
+		    boolean file_esistente;
+		    
+		    File file;
+		    
+		    do
+			{
+			file_esistente = false;
+			file = new File("output/NumberMassive/AvgNumbers_"+scostamento+".txt");
+			if (file.exists())
+			{
+				file_esistente = true;
+				scostamento++;
+			}
+			}while(file_esistente == true);
+		    
+		    
+		    
 		    file.getParentFile().mkdirs();
 		    //File file = new File("prova_file/AvgNumbers.txt");
 		    long start = System.currentTimeMillis();
@@ -42,7 +59,7 @@ public class Builder_file {
 		        	//char c = alphabet.charAt(r.nextInt(N));
 		            int number = random.nextInt(1000) + 1;
 		            writer.print(sep);
-		            writer.print(number / 1e3);
+		            writer.print(number);
 		            //writer.print(c);
 		            sep = " ";
 		        }

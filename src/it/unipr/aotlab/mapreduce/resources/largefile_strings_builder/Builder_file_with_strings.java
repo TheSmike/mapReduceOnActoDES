@@ -90,7 +90,7 @@ public class Builder_file_with_strings {
 	    FileWriter fw = new FileWriter(this.destFile,true);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    
-	    int dim_maxMB = 400;
+	    int dim_maxMB = 200;
 	    
 	    while( dim_fileMB < dim_maxMB)
 	    {
@@ -124,9 +124,11 @@ public class Builder_file_with_strings {
 		
 		//leggo un file e srivo tutto questo file su un altro tot volte
 		
-		File file1 = new File("resources/CountWord/file_parole3.txt");
+		//File file1 = new File("resources/CountWord/file_parole2.txt");
+		File file1 = new File("resources/CountWord/file_parole.txt");
 		
-		File file2 = new File("output/prova_file/file_stringhe.txt");
+		//File file2 = new File("resources/Strings/file_stringhe1.txt");
+		File file2 = new File("resources/Strings/file_stringhe3.txt");
 		
 		
 		Builder_file_with_strings bf = new Builder_file_with_strings(file1,file2);

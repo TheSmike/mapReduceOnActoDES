@@ -12,6 +12,10 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.countword.CountWordMap;
 import it.unipr.aotlab.mapreduce.countword.CountWordReduce;
 
+/**
+ * Launch the application with example of mapreduce with numbers.
+ *
+ */
 public class BootMassiveNumber {
 
 	public static void main(String[] args) {
@@ -19,7 +23,7 @@ public class BootMassiveNumber {
 		final int workers = 3;
 		final int blockSize = 25 * 1024 * 1024;
 		final int bufferedContextSize = 100 * 1024 * 1024;
-		final String inputPath = "output/prova_file/";
+		final String inputPath = "output/NumberMassive/";
 		final String outputPath = "output/Numbers/";
 		final MapJob mapJob = new NumberMap();
 		final ReduceJob reduceJob = new NumberReduce();

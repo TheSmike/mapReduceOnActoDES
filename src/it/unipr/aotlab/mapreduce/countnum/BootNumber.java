@@ -12,6 +12,10 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.countword.CountWordMap;
 import it.unipr.aotlab.mapreduce.countword.CountWordReduce;
 
+/**
+ * Launch the application with example of mapreduce with numbers (only a simple file with a few numbers)
+ *
+ */
 public class BootNumber {
 	
 	public static void main(String[] args) {

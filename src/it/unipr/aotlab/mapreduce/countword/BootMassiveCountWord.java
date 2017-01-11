@@ -19,9 +19,11 @@ public class BootMassiveCountWord {
 	public static void main(String[] args) {
 		// params
 		final int workers = 3;
-		final int blockSize = 1024;
-		final String inputPath = "resources/CountWordMassive/";
-		//final String inputPath = "output/prova_file/";
+		//final int blockSize = 1024;
+		final int blockSize = 25 * 1024 * 1024;
+		final int bufferedContextSize = 100 * 1024 * 1024;
+		//final String inputPath = "resources/CountWordMassive/";
+		final String inputPath = "resources/Strings/";
 		final String outputPath = "output/CountWordMassive/";
 		final MapJob mapJob = new CountWordMap();
 		final ReduceJob reduceJob = new CountWordReduce();
@@ -29,7 +31,7 @@ public class BootMassiveCountWord {
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());
 		c.setCreator(Master.class.getName());
-		c.setArguments(workers, inputPath, outputPath, blockSize, mapJob, reduceJob);
+		c.setArguments(workers, inputPath, outputPath, blockSize, mapJob, reduceJob, bufferedContextSize);
 		c.setFilter(Logger.ALLLOGS);
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();
