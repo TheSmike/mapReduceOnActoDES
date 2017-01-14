@@ -22,9 +22,9 @@ public class Map implements Action {
 	private MapJob job;
 
 	/**
-	 * @param fh : specify a resourceHandler for the map function
-	 * @param mapBlockNumber : specify the block number that we need to perform map function
-	 * @param job : specify the {@code MapJob} for the map operation
+	 * @param fh  specify a resourceHandler for the map function
+	 * @param mapBlockNumber  specify the block number that we need to perform map function
+	 * @param job  specify the {@code MapJob} for the map operation
 	 */
 	public Map(ResourcesHandler fh, int mapBlockNumber, MapJob job) {
 		this.rh = fh;

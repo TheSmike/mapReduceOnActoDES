@@ -37,7 +37,7 @@ public class NumberMap implements MapJob {
 		
 			//prelevo la stringa la converto in numero e metto tutto nella lista
 			int numero = Integer.parseInt(s);
-			//float numero = Float.parseFloat(s);
+			
 			
 			numbers.add((int)numero);
 		}

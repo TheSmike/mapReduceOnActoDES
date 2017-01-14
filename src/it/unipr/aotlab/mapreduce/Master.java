@@ -163,7 +163,7 @@ public final class Master extends Behavior {
 	 * block different for each one.
 	 * 
 	 * @param workers
-	 *            : Reference of workers
+	 *             Reference of workers
 	 */
 	private void launchAllMapWorker(Reference[] workers) {
 		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
@@ -174,7 +174,7 @@ public final class Master extends Behavior {
 
 	/**
 	 * @param m
-	 *            = message of type mapcase
+	 *             message of type mapcase
 	 */
 	private void launchMapWorker(Message m) {
 		// assign another block to this worker
@@ -188,7 +188,7 @@ public final class Master extends Behavior {
 	 * reduce function.
 	 * 
 	 * @param workers
-	 *            : Reference of workers
+	 *             Reference of workers
 	 */
 	private void launchAllReduceWorker(Reference[] workers) {
 		// All workers have ended Map fucntion, start with Reduce function
@@ -208,7 +208,7 @@ public final class Master extends Behavior {
 	 * that method send a message to a worker for performing the reduce function
 	 * 
 	 * @param m
-	 *            = message for communicate at a worker to make the reduce function
+	 *             message for communicate at a worker to make the reduce function
 	 */
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
@@ -218,7 +218,7 @@ public final class Master extends Behavior {
 	
 	
 	/**
-	 * @param m = message for communicate at a worker to do a sort function.
+	 * @param m  message for communicate at a worker to do a sort function.
 	 * 
 	 */
 	private void launchSortWorker(Message m) {
@@ -229,7 +229,7 @@ public final class Master extends Behavior {
 
 	/**
 	 * @param reduceBlock
-	 *            : number of reduce block
+	 *             number of reduce block
 	 * @return a new reduce instance for performing the reduce operation on a
 	 *         particular block
 	 */
@@ -239,7 +239,7 @@ public final class Master extends Behavior {
 
 	/**
 	 * @param mapBlock
-	 *            : number of block that we want to perform mapfunction
+	 *             number of block that we want to perform mapfunction
 	 * @return new instance of Map operation
 	 */
 	private Map getMapFunction(int mapBlock) {

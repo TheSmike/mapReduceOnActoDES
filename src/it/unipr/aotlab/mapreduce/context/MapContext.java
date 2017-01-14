@@ -140,7 +140,7 @@ public class MapContext implements Context {
 				HeadFile pointer = null;
 				// foreach headline select minor and memorize associated
 				// HeadFile
-				int index = 0;
+				
 				for (HeadFile headFile : fileHeads) {
 
 					if (headFile.fileNotEnded()) {
@@ -149,7 +149,7 @@ public class MapContext implements Context {
 							lower = line;
 							pointer = headFile;
 						}
-						index++;
+						
 					}
 				}
 				writeSorted(bw, pointer.getLastReadedLine());

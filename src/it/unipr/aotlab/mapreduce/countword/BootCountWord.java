@@ -18,7 +18,7 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
  */
 public class BootCountWord {
 	public static void main(String[] args) {
-		// params
+		
 		final int workers = 3;
 		final int blockSize = 10;
 		final int bufferedContextSize = 100;

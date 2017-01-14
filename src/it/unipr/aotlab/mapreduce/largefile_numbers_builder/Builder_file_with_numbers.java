@@ -19,15 +19,7 @@ public class Builder_file_with_numbers {
 
 	public static void main(String[] args)throws FileNotFoundException, UnsupportedEncodingException  {
 		
-		//final String alphabet = "0123456789ABCDE";
-	   // final int N = alphabet.length();
-
-	   // Random r = new Random();
-
-	   // for (int i = 0; i < 50; i++) {
-	    	//char c = alphabet.charAt(r.nextInt(N));
-	       // System.out.print(alphabet.charAt(r.nextInt(N)));
-	  //  }
+		
 		    //Size in Gbs of my file that I want
 		    double wantedSize = Double.parseDouble(System.getProperty("size", "0.2"));
 
@@ -57,15 +49,12 @@ public class Builder_file_with_numbers {
 		    int counter = 0;
 		    while (true) {
 		        String sep = "";
-		        //String alphabet = "0123456789ABCDE";
-		        //int N = alphabet.length();
+		        
 		        for (int i = 0; i < 100; i++) {
-		        //for (int i = 0; i < 50; i++) {
-		        	//char c = alphabet.charAt(r.nextInt(N));
+		      
 		            int number = random.nextInt(1000) + 1;
 		            writer.print(sep);
 		            writer.print(number);
-		            //writer.print(c);
 		            sep = " ";
 		        }
 		        writer.println();

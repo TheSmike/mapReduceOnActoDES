@@ -19,7 +19,7 @@ import it.unipr.aotlab.mapreduce.countword.CountWordReduce;
 public class BootNumber {
 	
 	public static void main(String[] args) {
-		// params
+		
 		final int workers = 3;
 		final int blockSize = 10;
 		final String inputPath = "resources/Numbers/";

@@ -16,8 +16,8 @@ public interface MapJob {
 	/**
 	 * execute Job on single line, the method implementation must use {@code context} 
 	 * to write on output Context.
-	 * @param line : the line that we want to process with a map function
-	 * @param context : specify a context where to write inside
+	 * @param line  the line that we want to process with a map function
+	 * @param context  specify a context where to write inside
 	 * 
 	 * @see Context
 	 * 

@@ -21,18 +21,16 @@ public class CountWordMap implements MapJob {
 	  */
 	@Override
 	public void execute(String line, Context context) throws Exception {
-		//context.put(key, value);
-		//System.out.println(line+"\n");
+		
 		
 		List<String> list = new ArrayList<String>(Arrays.asList(line.split(" ")));
 		
-		//HashMap <String, List<Integer>> map = new HashMap<String,List<Integer>>();
+		
 		
 		HashMap <String, Integer> map = new HashMap<String,Integer>();
 		
 		
-		//splitto la parole di una riga
-//		System.out.println(list+"\n");
+
 		
 		//conto le occorrenze di ciascuna parola e ne popolo una hasmap locale per riga
 		for(int i = 0; i < list.size(); i++)
@@ -52,22 +50,6 @@ public class CountWordMap implements MapJob {
 
 		}
 		
-		/*
-		List<Integer> conteggio;
-		
-		if (map.containsKey(elem)) {
-		    conteggio = map.get(elem);
-		  } else {
-		    conteggio = new ArrayList<Integer>();;
-		  }
-		  conteggio.add(contatore);
-		  map.put(elem, conteggio);
-		 */ 
-		
-		  
-		//context.put(elem,conteggio);
-		
-//		System.out.println("La parola "+elem+" è stata trovata nella riga "+contatore+" volte \n");
 		
 		map.put(elem,contatore);
 		
@@ -79,20 +61,7 @@ public class CountWordMap implements MapJob {
 		
 		}
 		
-		//System.out.println(map+"\n");
 		
-		/*
-		for ( Entry<String, List<Integer>> entry : map.entrySet()) {
-		    String key = entry.getKey();
-		    List<Integer> values = entry.getValue();
-		    
-		    //System.out.println(key+"\n");
-		    //System.out.println(values+"\n");
-		    
-		    context.put(key, values);
-		    
-		}
-		*/
 		
 		context.putMap(map);
 		

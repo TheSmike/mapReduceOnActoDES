@@ -26,9 +26,9 @@ public class Reduce implements Action {
 	private ReduceJob job;
 	
 	/**
-	 * @param rh : specify a resourceHandler for the reduce function.
-	 * @param reduceBlockNumber : specify the block number that we need to perform the reduce function
-	 * @param job : specify the {@code ReduceJob} for the reduce operation
+	 * @param rh  specify a resourceHandler for the reduce function.
+	 * @param reduceBlockNumber  specify the block number that we need to perform the reduce function
+	 * @param job  specify the {@code ReduceJob} for the reduce operation
 	 */
 	public Reduce(ResourcesHandler rh, int reduceBlockNumber, ReduceJob job) {
 		super();

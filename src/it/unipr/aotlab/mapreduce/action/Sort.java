@@ -19,7 +19,7 @@ public class Sort {
 	/**
 	 * Class Constructor
 	 * 
-	 * @param fh = ResourcesHandler
+	 * @param fh  ResourcesHandler
 	 */
 	public Sort(ResourcesHandler fh) {
 		this.rh = fh;
