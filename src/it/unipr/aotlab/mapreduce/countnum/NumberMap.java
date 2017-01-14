@@ -9,7 +9,7 @@ import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 
 /**
- * This class {@NumberMap} implement the map function with numbers.
+ * This class {@code NumberMap} implement the map function with numbers.
  * This function consist in read each line, create a <key,value> pair with 
  * key = sum of the numbers in a line, and value = median of numbers in this line
  *
@@ -18,8 +18,6 @@ public class NumberMap implements MapJob {
 
 	@Override
 	public void execute(String line, Context context) throws Exception {
-		// TODO Auto-generated method stub
-		
 		//faccio un operazione con i numeri e lo inserisco nel context, potrebbe
 		//essere ad esempio sommo i numeri di ogni riga (key = somma) e faccio la media
 		//degli stessi (value = media)
@@ -69,13 +67,8 @@ public class NumberMap implements MapJob {
 		
 		
 		
-		context.putAll(map);
-		
-		
-		
-		
-		
-		
+		context.putMap(map);
+	
 	}
 
 }

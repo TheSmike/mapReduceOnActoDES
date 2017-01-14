@@ -1,5 +1,9 @@
 package it.unipr.aotlab.mapreduce;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import it.unipr.aotlab.actodes.actor.Behavior;
 import it.unipr.aotlab.actodes.actor.Binder;
 import it.unipr.aotlab.actodes.actor.Case;
@@ -28,6 +32,7 @@ import it.unipr.aotlab.mapreduce.utils.StrUtils;
  */
 public final class Master extends Behavior {
 
+	private static final DateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS'Z'");
 	private static final int BUFFERED_CONTEXT_DEFAULT_SIZE = 10 * 1024; //10Kb
 	// Current number of response.
 	private int responseCount;
@@ -99,27 +104,34 @@ public final class Master extends Behavior {
 			if (mapBlocksCount < maxMapBlocks) {
 				launchMapWorker(m);
 			} else if (this.responseCount == this.maxMapBlocks) {
+				printTime("START SORT");
 				//sortMapResult(workers);
 				launchSortWorker(m);
 			}else if (this.responseCount == this.maxMapBlocks +1){
-				
+				printTime("START REDUCE ");
 				launchAllReduceWorker(workers);
 			
 			} else if (reduceBlocksCount < maxReduceBlocksCount) {
 				launchReduceWorker(m);
-			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount) {
+			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount + 1) {
 				rh.closeReduceContext();
 				// rh.deleteTmpFiles();
+				printTime("STOP");
 				return stopApplication(workers);
 			}
 
 			return null;
 		};
 		/******** end case ********/
-
+		
 		// first call to workers
+		printTime("START MAP");
 		launchAllMapWorker(workers);
 
+	}
+
+	private void printTime(String text) {
+		System.out.println(text + " => " + sdf.format(new Date()));
 	}
 
 	/**** PRIVATE METHOD ****/

@@ -3,7 +3,6 @@ package it.unipr.aotlab.mapreduce.resources.largefile_strings_builder;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,11 +11,20 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Scarpenti 
+ * @author Viti 
+ */
 public class Builder_file_with_strings {
 	
-	private  File sourceFile;
-	private  File destFile;
+	private File sourceFile;
+	private File destFile;
 	
+	/**
+	 * This class generates a new file destFile, in which append sourceFile X times until choosen dimension is reached
+	 * @param sourceFile path of source file 
+	 * @param destFile path of destination file 
+	 */
 	public Builder_file_with_strings (File sourceFile, File destFile)
 	{
 		this.sourceFile = sourceFile;
@@ -26,7 +34,10 @@ public class Builder_file_with_strings {
 	
 	
 	
-	
+	/**
+	 * Create a sourceFile copy into {@code destFile} path
+	 * @throws IOException
+	 */
 	public void copyFile( ) throws IOException {
 		
 		File sourceFile = this.sourceFile;
@@ -63,7 +74,11 @@ public class Builder_file_with_strings {
 		  }
 		}
 	
-	public void append () throws IOException
+	/**
+	 * Append copy of {@code sourceFile}  into {@code destFile}  
+	 * @throws IOException
+	 */
+	public void append() throws IOException
 	{
 		
 		RandomAccessFile reader1 = new RandomAccessFile(this.sourceFile, "rw");
@@ -119,16 +134,22 @@ public class Builder_file_with_strings {
 		
 	}
 
+	/**
+	 * Invokation of this class
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
 		//leggo un file e srivo tutto questo file su un altro tot volte
 		
-		//File file1 = new File("resources/CountWord/file_parole2.txt");
-		File file1 = new File("resources/CountWord/file_parole.txt");
+		File file1 = new File("resources/CountWord/file_parole2.txt");
+//		File file1 = new File("resources/CountWord/file_parole.txt");
 		
-		//File file2 = new File("resources/Strings/file_stringhe1.txt");
-		File file2 = new File("resources/Strings/file_stringhe3.txt");
+		File file2 = new File("resources/Strings/file_stringhe1.txt");
+//		File file2 = new File("resources/Strings/file_stringhe3.txt");
+		file2.getParentFile().mkdirs();
 		
 		
 		Builder_file_with_strings bf = new Builder_file_with_strings(file1,file2);

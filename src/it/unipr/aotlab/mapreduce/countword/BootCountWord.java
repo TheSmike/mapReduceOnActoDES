@@ -21,6 +21,7 @@ public class BootCountWord {
 		// params
 		final int workers = 3;
 		final int blockSize = 10;
+		final int bufferedContextSize = 100;
 		final String inputPath = "resources/CountWord/";
 		final String outputPath = "output/CountWord/";
 		final MapJob mapJob = new CountWordMap();
@@ -29,7 +30,7 @@ public class BootCountWord {
 		Configuration c = Controller.INSTANCE.getConfiguration();
 		c.setScheduler(ThreadPoolScheduler.class.getName());
 		c.setCreator(Master.class.getName());
-		c.setArguments(workers, inputPath, outputPath, blockSize, mapJob, reduceJob);
+		c.setArguments(workers, inputPath, outputPath, blockSize, mapJob, reduceJob, bufferedContextSize);
 		c.setFilter(Logger.ALLLOGS);
 		c.addWriter(ConsoleWriter.class.getName(), TextualFormatter.class.getName(), null);
 		Controller.INSTANCE.run();

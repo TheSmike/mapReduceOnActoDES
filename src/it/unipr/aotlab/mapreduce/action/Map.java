@@ -7,13 +7,13 @@ import it.unipr.aotlab.actodes.interaction.Action;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.resources.InputLinesReader;
 import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
+import it.unipr.aotlab.mapreduce.context.Context;;
 
 /**
  * @author Omi087
- *
- *
- *this class implement the {@code Action} interface, in particular define
- *a {@code Map} Action
+ * This class implement the {@code Action} interface, in particular define
+ * the {@code Map} Action to read all line in sequence and call {@link MapJob#execute(String, Context)}
+ * method
  */
 public class Map implements Action {
 
@@ -33,8 +33,8 @@ public class Map implements Action {
 	}
 
 	/**
-	 * 
-	 * lunch a job that execute the operation defined in LinesReader for a specific 
+	 * Lunch a job that execute the operation defined by an implementation of {@link MapJob} 
+	 * on lines of LinesReader for a specific 
 	 * {@code mapBlockNumber}
 	 * 
 	 * @throws Exception

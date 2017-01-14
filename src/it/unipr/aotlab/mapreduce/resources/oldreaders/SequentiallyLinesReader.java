@@ -7,10 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * 
  * This class define a LineReader which aims to read the file line by line with the limit
  * specified by {@code blockSize}
- *
  */
 public abstract class SequentiallyLinesReader implements AutoCloseable {
 
@@ -43,21 +41,5 @@ public abstract class SequentiallyLinesReader implements AutoCloseable {
 				throw new RuntimeException(e);
 			}
 	}
-
-	// RandomAccessFile raf = null;
-	// try {
-	// raf = new RandomAccessFile(new File(inputPath), "r");
-	// raf.seek(mapBlock * blockSize);
-	// byte[] b = new byte[blockSize];
-	// raf.read();
-	// } catch (Exception e) {
-	// throw new RuntimeException(e);
-	// }finally {
-	// if (raf != null)
-	// try {
-	// raf.close();
-	// } catch (IOException e) {
-	// throw new RuntimeException(e);
-	// }
-	// }
+	
 }

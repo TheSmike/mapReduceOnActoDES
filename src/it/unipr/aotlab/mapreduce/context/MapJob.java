@@ -3,16 +3,21 @@
  */
 package it.unipr.aotlab.mapreduce.context;
 
+import it.unipr.aotlab.mapreduce.action.Map;
+
 /**
- * @author Omi087
- *
+ * Rappresent a generic Mapping Job to implement, this Interface is used inside {@link Map} 
+ * for the purpose to execute the specified MapJob implemented.
+ * @author Scarpenti 
+ * @author Viti 
  */
 public interface MapJob {
 
 	/**
+	 * execute Job on single line, the method implementation must use {@code context} 
+	 * to write on output Context.
 	 * @param line : the line that we want to process with a map function
-	 * @param context : specify a context that define a couple key-value for each word
-	 * extract in map function of the line readed.
+	 * @param context : specify a context where to write inside
 	 * 
 	 * @see Context
 	 * 

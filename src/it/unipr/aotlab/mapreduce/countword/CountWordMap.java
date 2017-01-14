@@ -4,27 +4,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 
-
-
 /**
- * @author Vittorio
- *
  * 
+ * @author Scarpenti 
+ * @author Viti 
  */
 public class CountWordMap implements MapJob {
 
 	/**
 	  * {@inheritDoc}
+	  * Count number of single word for each line and write it on Context
 	  */
-	
 	@Override
 	public void execute(String line, Context context) throws Exception {
-		// TODO Auto-generated method stub
 		//context.put(key, value);
 		//System.out.println(line+"\n");
 		
@@ -98,7 +94,7 @@ public class CountWordMap implements MapJob {
 		}
 		*/
 		
-		context.putAll(map);
+		context.putMap(map);
 		
 	}
 

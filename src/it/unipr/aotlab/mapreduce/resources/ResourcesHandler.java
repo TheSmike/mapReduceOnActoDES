@@ -11,9 +11,9 @@ import it.unipr.aotlab.mapreduce.context.MapFileContext;
 
 /**
  * 
- * 
- * This class use some information for handle the operation of map/reduce in a
- * particular directory.
+ * @author Scarpenti 
+ * @author Viti 
+ * This class maintains some information about file on FS for use inside the operation of map/reduce.
  *
  */
 public class ResourcesHandler {
@@ -29,14 +29,15 @@ public class ResourcesHandler {
 
 	/**
 	 * 
-	 * Class constructor
+	 *  This class maintains some information about file on FS for use inside the operation of map/reduce.
+	 *  
 	 * 
 	 * @param inputPath
 	 *            : path of the input directory
 	 * @param outputPath
 	 *            : path of the output directory
 	 * @param blockSize
-	 *            : the size of the block where the single file is splitted
+	 *            : the size of each block in wich the single file is splitted
 	 * @param bufferedContextSize 
 	 * 			  : size of buffered input Context in memory, if size exceeds the buffer is write in file and emptied
 	 */
@@ -52,7 +53,7 @@ public class ResourcesHandler {
 	}
 
 	/**
-	 * Count number of blocks in file/directory
+	 * return number of blocks in input file or directory
 	 * 
 	 * @return
 	 */
@@ -62,9 +63,9 @@ public class ResourcesHandler {
 
 	/**
 	 * 
-	 * @param blockNumber:
+	 * @param blockNumber
 	 *            the number of the block that identify a piece of file
-	 * @return new instance of {@code InputLinesReader}
+	 * @return new instance of {@code InputLinesReader} associated with selected {@code blockNumber}
 	 */
 	public InputLinesReader getInputLinesReader(int blockNumber) {
 		return inputBlockReader.getInputLinesReader(blockNumber);

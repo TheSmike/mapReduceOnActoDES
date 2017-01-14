@@ -12,7 +12,7 @@ import java.util.List;
  * 
  * The class {@code BlockReader} has the purpose to split the inputfile in some blocks
  * and calculate how many blocks are needed to read the inputfile, this is achieved with
- * the definition of fixed lenght blocks based on total lenght of file. By the way one 
+ * the definition of fixed length blocks based on total length of file. By the way one 
  * block cannot end in the middle of one line, in fact we need to using block that end
  * at the end of a line of file.
  *
@@ -130,7 +130,7 @@ public class BlockReader {
 	  		
 	  		reader.seek(pointer);
 	  				
-	  		String line = reader.readLine();
+	  		reader.readLine();
 	  		
 	  		//System.out.println(line);
 	  		
@@ -281,7 +281,7 @@ public class BlockReader {
 		
 		//BlockReader blockreader = new BlockReader("resources/CountWord/file_parole.txt",25);
 		
-		int n_blocchi = blockreader.getTotalBlockNumber();
+//		int n_blocchi = blockreader.getTotalBlockNumber();
 		
 		//System.out.println("Il numero di blocchi in cui spezzo il file è "+n_blocchi+" \n");
 		

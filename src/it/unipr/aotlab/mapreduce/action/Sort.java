@@ -28,7 +28,7 @@ public class Sort {
 
 	/**
 	 * 
-	 * execute the {@code SortAndGroup} method
+	 * execute the {@link ResourcesHandler#sortAndGroup()} method
 	 * 
 	 * @throws Exception
 	 */

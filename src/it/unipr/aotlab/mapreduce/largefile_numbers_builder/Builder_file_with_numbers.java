@@ -11,14 +11,13 @@ import java.util.Random;
 
 /**
  * The class {@code Builder_file_with_numbers} create a random file with size chosen by the
- * user, and fill it with number, that file is used for the test with map-reduce 
- * case with numbers.
+ * user, and fill it with integer numbers, that file is used for the test with map-reduce 
+ * case with integer numbers.
  *
  */
 public class Builder_file_with_numbers {
 
 	public static void main(String[] args)throws FileNotFoundException, UnsupportedEncodingException  {
-		// TODO Auto-generated method stub
 		
 		//final String alphabet = "0123456789ABCDE";
 	   // final int N = alphabet.length();

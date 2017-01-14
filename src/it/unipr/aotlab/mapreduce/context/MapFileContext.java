@@ -7,11 +7,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class MapFileContext implements Context, AutoCloseable {
+/**
+ * @author Scarpenti 
+ * @author Viti 
+ */
+public class MapFileContext implements Context {
 
 	String outputPath;
 	BufferedWriter bw;
 
+	/**
+	 * File Context that implements {@link Context}, save data in a single file.
+	 * @param outputPath path of output file or folder 
+	 */
 	public MapFileContext(String outputPath) {
 		try {
 			this.outputPath = outputPath;
@@ -46,7 +54,7 @@ public class MapFileContext implements Context, AutoCloseable {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void putAll(Map map) {
+	public void putMap(Map map) {
 		Set<Entry> setEntry = map.entrySet();
 		for (Entry entry : setEntry) {
 			put(entry.getKey(), entry.getValue());
