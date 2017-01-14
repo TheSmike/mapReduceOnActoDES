@@ -12,6 +12,11 @@ import it.unipr.aotlab.mapreduce.context.ReduceJob;
 import it.unipr.aotlab.mapreduce.countword.CountWordMap;
 import it.unipr.aotlab.mapreduce.countword.CountWordReduce;
 
+/**
+ * Boot for Cipher algorithm
+ * @author Omi087
+ *
+ */
 public class BootTransformString {
 	
 	public static void main(String[] args) {

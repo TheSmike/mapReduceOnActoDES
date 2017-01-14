@@ -5,13 +5,20 @@ import java.util.List;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
+/**
+ * Dummy reduce function of simple cipher algorithm
+ */
 public class TransformStringReduce implements ReduceJob {
 
 	int righeLette = 0; 
 	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 * 
+	 * Reduce Phases are the opposite of Map Phases, this phases decode lines encoded in MapJob
+	 * 
+	 */
 	@Override
 	public void execute(String key, List<String> values, Context context) throws Exception {
 		

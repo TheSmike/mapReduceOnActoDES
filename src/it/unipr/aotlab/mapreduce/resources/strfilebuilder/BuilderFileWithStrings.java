@@ -1,4 +1,4 @@
-package it.unipr.aotlab.mapreduce.resources.largefile_strings_builder;
+package it.unipr.aotlab.mapreduce.resources.strfilebuilder;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Scarpenti 
  * @author Viti 
  */
-public class Builder_file_with_strings {
+public class BuilderFileWithStrings {
 	
 	private File sourceFile;
 	private File destFile;
@@ -25,7 +25,7 @@ public class Builder_file_with_strings {
 	 * @param sourceFile path of source file 
 	 * @param destFile path of destination file 
 	 */
-	public Builder_file_with_strings (File sourceFile, File destFile)
+	public BuilderFileWithStrings (File sourceFile, File destFile)
 	{
 		this.sourceFile = sourceFile;
 		this.destFile = destFile;	
@@ -152,7 +152,7 @@ public class Builder_file_with_strings {
 		file2.getParentFile().mkdirs();
 		
 		
-		Builder_file_with_strings bf = new Builder_file_with_strings(file1,file2);
+		BuilderFileWithStrings bf = new BuilderFileWithStrings(file1,file2);
 		
 		
 		bf.copyFile();

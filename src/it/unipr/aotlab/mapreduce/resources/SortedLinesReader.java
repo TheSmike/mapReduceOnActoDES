@@ -7,11 +7,29 @@ import java.util.Arrays;
 
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
+/**
+ * @author Scarpenti 
+ * @author Viti 
+ */
 public class SortedLinesReader extends LinesReader {
+
+	/**
+	 * The class {@code SortedLinesReader} define an object that read line by line a block of file at the
+	 * {@code startPosition} and end when {@code blockSize} is reached. {@code file} is  
+	 * input file where this operation is applied	
+	 * @param startPosition
+	 * @param blockSize
+	 * @param file
+	 */
 	public SortedLinesReader(int startPosition, int blockSize, File file) {
 		super(startPosition, blockSize, file);
 	}
 
+
+	/**
+	 * Read a line 
+	 * @return a line in {@link SortedLine} format
+	 */
 	public SortedLine readLine() {
 		try {
 			String line = super.read();

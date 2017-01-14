@@ -1,4 +1,4 @@
-package it.unipr.aotlab.mapreduce.largefile_numbers_builder;
+package it.unipr.aotlab.mapreduce.numfilebuilder;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.Random;
  * case with integer numbers.
  *
  */
-public class Builder_file_with_numbers {
+public class BuilderFileWithNumbers {
 
 	public static void main(String[] args)throws FileNotFoundException, UnsupportedEncodingException  {
 		

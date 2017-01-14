@@ -10,6 +10,9 @@ import it.unipr.aotlab.mapreduce.Master;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
+/**
+ * Simple boot for dummy example
+ */
 public class BootStub {
 	public static void main(String[] args) {
 		// params

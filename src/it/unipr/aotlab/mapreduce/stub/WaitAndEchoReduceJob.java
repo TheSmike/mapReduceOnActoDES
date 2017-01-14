@@ -6,6 +6,10 @@ import java.util.Random;
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
 
+/**
+ * Dummy example about Reduce function
+ *
+ */
 public class WaitAndEchoReduceJob implements ReduceJob{
 
 	@Override

@@ -21,19 +21,21 @@ import it.unipr.aotlab.mapreduce.resources.ResourcesHandler;
 import it.unipr.aotlab.mapreduce.utils.StrUtils;
 
 /**
- * The {@code Initiator1} class defines a behavior that creates an
- * {@code EmptyBuffer} actor and a set of (a {@code Producer} and a
- * {@code Consumer}) actors.
- *
- * After a fixed period of time it asks them to kill themselves.
- *
- * @author Omi087
- *
+ * Master is the Initiator of application, it create and controls other Actor
+ * and ask to them to make same work. This is a MapReduce envinroment so Master
+ * can ask a specific worker to execute a Job. There are 3 kind of job:
+ * <ul>
+ * <li>{@link MapJob}</li>
+ * <li>{@link Sort} job</li>
+ * <li>{@link ReduceJob}</li>
+ * </ul>
+ * . Map and Reduce are defined as parameters, the Sort function is fixed.
+ * 
  */
 public final class Master extends Behavior {
 
 	private static final DateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS'Z'");
-	private static final int BUFFERED_CONTEXT_DEFAULT_SIZE = 10 * 1024; //10Kb
+	private static final int BUFFERED_CONTEXT_DEFAULT_SIZE = 10 * 1024; // 10Kb
 	// Current number of response.
 	private int responseCount;
 	// index of last invoked worker
@@ -60,8 +62,10 @@ public final class Master extends Behavior {
 	 * @param v
 	 *            the arguments:
 	 *
-	 *            the number of workers, input path, output path, TODO map
-	 *            function, TODO reduce function.
+	 *            the number of workers, path of input files, path of output
+	 *            files, blockSize of each block, mapJob: the map function,
+	 *            reduceJob: the reduce function, buffer Size for temp sorted
+	 *            lines.
 	 *
 	 **/
 	@Override
@@ -79,7 +83,7 @@ public final class Master extends Behavior {
 		this.mapJob = (MapJob) v[4];
 		this.reduceJob = (ReduceJob) v[5];
 		int bufferedContextSize;
-		if(v.length>6 && v[6] != null)
+		if (v.length > 6 && v[6] != null)
 			bufferedContextSize = (int) v[6];
 		else
 			bufferedContextSize = BUFFERED_CONTEXT_DEFAULT_SIZE;
@@ -105,12 +109,12 @@ public final class Master extends Behavior {
 				launchMapWorker(m);
 			} else if (this.responseCount == this.maxMapBlocks) {
 				printTime("START SORT");
-				//sortMapResult(workers);
+				// sortMapResult(workers);
 				launchSortWorker(m);
-			}else if (this.responseCount == this.maxMapBlocks +1){
+			} else if (this.responseCount == this.maxMapBlocks + 1) {
 				printTime("START REDUCE ");
 				launchAllReduceWorker(workers);
-			
+
 			} else if (reduceBlocksCount < maxReduceBlocksCount) {
 				launchReduceWorker(m);
 			} else if (responseCount == this.maxMapBlocks + this.maxReduceBlocksCount + 1) {
@@ -123,7 +127,7 @@ public final class Master extends Behavior {
 			return null;
 		};
 		/******** end case ********/
-		
+
 		// first call to workers
 		printTime("START MAP");
 		launchAllMapWorker(workers);
@@ -132,12 +136,6 @@ public final class Master extends Behavior {
 
 	private void printTime(String text) {
 		System.out.println(text + " => " + sdf.format(new Date()));
-	}
-
-	/**** PRIVATE METHOD ****/
-
-	private void sortMapResult(Reference[] workers) {
-		rh.sortAndGroup();
 	}
 
 	/**
@@ -163,7 +161,7 @@ public final class Master extends Behavior {
 	 * block different for each one.
 	 * 
 	 * @param workers
-	 *             Reference of workers
+	 *            Reference of workers
 	 */
 	private void launchAllMapWorker(Reference[] workers) {
 		while (currentWorkerIdx < this.workerNum && mapBlocksCount < maxMapBlocks) {
@@ -173,8 +171,11 @@ public final class Master extends Behavior {
 	}
 
 	/**
+	 * send a message to current worker that just answered that he had finished
+	 * previous Map function.
+	 * 
 	 * @param m
-	 *             message of type mapcase
+	 *            message of type mapcase
 	 */
 	private void launchMapWorker(Message m) {
 		// assign another block to this worker
@@ -188,7 +189,7 @@ public final class Master extends Behavior {
 	 * reduce function.
 	 * 
 	 * @param workers
-	 *             Reference of workers
+	 *            : Reference of workers
 	 */
 	private void launchAllReduceWorker(Reference[] workers) {
 		// All workers have ended Map fucntion, start with Reduce function
@@ -205,33 +206,36 @@ public final class Master extends Behavior {
 
 	/**
 	 * 
-	 * that method send a message to a worker for performing the reduce function
+	 * That method send a message to a worker for performing the reduce
+	 * function, send a message to current worker that just answered that he had
+	 * finished previous Reduce function.
 	 * 
 	 * @param m
-	 *             message for communicate at a worker to make the reduce function
+	 *            message for communicate at a worker to make the reduce
+	 *            function
 	 */
 	private void launchReduceWorker(Message m) {
 		// assign another block to reduce to this worker
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to reduce");
 		future(m, getReduceFunction(reduceBlocksCount++), process);
 	}
-	
-	
+
 	/**
-	 * @param m  message for communicate at a worker to do a sort function.
+	 * Ask to Worker to execute reduce function
+	 * @param m
+	 *            message for communicate at a worker to do a sort function
 	 * 
 	 */
 	private void launchSortWorker(Message m) {
-		//ask a worker to make the sort function
+		// ask a worker to make the sort function
 		System.out.println("ask to workers[" + m.getSender().getName() + "] to make the sort operation");
 		future(m, getSortFunction(), process);
 	}
 
 	/**
 	 * @param reduceBlock
-	 *             number of reduce block
-	 * @return a new reduce instance for performing the reduce operation on a
-	 *         particular block
+	 *            number of reduce block
+	 * @return a new reduce instance for performing the reduce operation on specified block
 	 */
 	private Reduce getReduceFunction(int reduceBlock) {
 		return new Reduce(this.rh, reduceBlock, this.reduceJob);
@@ -239,18 +243,17 @@ public final class Master extends Behavior {
 
 	/**
 	 * @param mapBlock
-	 *             number of block that we want to perform mapfunction
-	 * @return new instance of Map operation
+	 *            number of map block
+	 * @return a new map instance for performing the map operation on specified block
 	 */
 	private Map getMapFunction(int mapBlock) {
 		return new Map(this.rh, mapBlock, this.mapJob);
 	}
-	
+
 	/**
-	 * @return new instance of Sort: is equivalent to say "do the sort function"
+	 * @return a new Sort instance for performing the sort operation on files coming from Map function
 	 */
-	private Sort getSortFunction()
-	{
+	private Sort getSortFunction() {
 		return new Sort(this.rh);
 	}
 

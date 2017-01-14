@@ -1,9 +1,7 @@
 package it.unipr.aotlab.mapreduce.resources;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.MapContext;
@@ -33,13 +31,13 @@ public class ResourcesHandler {
 	 *  
 	 * 
 	 * @param inputPath
-	 *            : path of the input directory
+	 *            path of the input directory
 	 * @param outputPath
-	 *            : path of the output directory
+	 *            path of the output directory
 	 * @param blockSize
-	 *            : the size of each block in wich the single file is splitted
+	 *            the size of each block in wich the single file is splitted
 	 * @param bufferedContextSize 
-	 * 			  : size of buffered input Context in memory, if size exceeds the buffer is write in file and emptied
+	 * 			  size of buffered input Context in memory, if size exceeds the buffer is write in file and emptied
 	 */
 	public ResourcesHandler(String inputPath, String outputPath, int blockSize, int bufferedContextSize) {
 		super();
@@ -79,7 +77,7 @@ public class ResourcesHandler {
 	}
 
 	/**
-	 * @return
+	 * @return return blocks number of sorted file
 	 */
 	public int countReduceBlocks() {
 		return this.sortedBlockReader.getMapBlocks();
@@ -87,36 +85,23 @@ public class ResourcesHandler {
 
 	/**
 	 * @param blockNumber
-	 *            : the number of the block that identify a piece of file
-	 * @return
+	 *            the number of the block that identify a piece of file
+	 * @return new instance of {@code SortedLinesReader} associated with selected {@code blockNumber}
 	 */
 	public SortedLinesReader getSortedLinesReader(int blockNumber) {
 		return sortedBlockReader.getSortedLinesReader(blockNumber);
 	}
 
 	/**
-	 * @return
+	 * @return OutputContext for reduce operation
 	 */
 	public Context getReduceContext() {
 		return reduceContext;
 	}
 
-	private static List<File> oldLoadPaths(String path) {
-		List<File> retValue = new ArrayList<>();
-		File f = new File(path);
-		if (f.exists()) {
-			if (f.isFile())
-				retValue.add(f);
-			else {
-				File[] files = f.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					retValue.add(files[i]);
-				}
-			}
-		}
-		return retValue;
-	}
-
+	/**
+	 * invoke Close method of ReduceContext
+	 */
 	public void closeReduceContext() {
 		try {
 			reduceContext.close();
@@ -126,6 +111,9 @@ public class ResourcesHandler {
 
 	}
 
+	/**
+	 * Delete all temp file generated in MapReduce process (sort files)
+	 */
 	public void deleteTmpFiles() {
 		File f = new File(tmpPath);
 		// File f2 = new File(f.getParentFile(), "/tmp"+ (new Date()).getTime()
@@ -138,13 +126,19 @@ public class ResourcesHandler {
 
 	}
 
+	/**
+	 * Sort all temp file in a single sorted files
+	 */
 	public void sortAndGroup() {
 		((MapContext) mapOutputContext).sortAll();
 		sortedBlockReader = new TotalBlockReader(tmpPath + "/sorted", blockSize);
 	}
 
+	/**
+	 *
+	 * @return  an execution unique id
+	 */
 	private long getIndex() {
-		// TODO Auto-generated method stub
 		return (new Date().getTime());
 	}
 

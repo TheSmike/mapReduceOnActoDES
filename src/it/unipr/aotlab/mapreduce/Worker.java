@@ -17,9 +17,10 @@ import it.unipr.aotlab.mapreduce.action.Sort;
  *
  * When it happens it kills itself.
  * 
- * Define also a {@code mapCase} and {@code reduceCase} that are build to determinate the map message or
- * reduce message
+ * Define also a {@code mapCase} , {@code reduceCase} and {@code sortCase} that are build to determinate the map message, 
+ * the reduce message or the sort message
  *
+ *	This class define also 3 {@link MessagePattern} to associate Case with Type of incoming message
  * @see Master
  *
  **/
@@ -45,10 +46,7 @@ public final class Worker extends KillableBehavior {
 	 * {@inheritDoc}
 	 *
 	 * @param v
-	 *            the arguments:
-	 *
-	 *            the number of messages.
-	 *
+	 *            empty arguments
 	 **/
 	@Override
 	public void initialize(final Binder b, final Object[] v) {

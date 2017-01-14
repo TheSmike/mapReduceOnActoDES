@@ -5,6 +5,10 @@ import java.util.Random;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.Context;
 
+/**
+ * Dummy example about Map function
+ *
+ */
 public class WaitAndEchoJob implements MapJob {
 
 	private static Random random = new Random();
