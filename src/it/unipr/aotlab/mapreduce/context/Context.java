@@ -20,6 +20,7 @@ public interface Context extends AutoCloseable {
 	 * Put some records at a time inside context
 	 * @param map
 	 */
+	@SuppressWarnings("rawtypes")
 	public void putMap(Map map);
 
 }

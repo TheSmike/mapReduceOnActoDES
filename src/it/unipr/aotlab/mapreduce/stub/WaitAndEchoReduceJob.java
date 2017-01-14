@@ -1,7 +1,6 @@
 package it.unipr.aotlab.mapreduce.stub;
 
 import java.util.List;
-import java.util.Random;
 
 import it.unipr.aotlab.mapreduce.context.Context;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;

@@ -9,8 +9,6 @@ import it.unipr.aotlab.actodes.runtime.active.ThreadPoolScheduler;
 import it.unipr.aotlab.mapreduce.Master;
 import it.unipr.aotlab.mapreduce.context.MapJob;
 import it.unipr.aotlab.mapreduce.context.ReduceJob;
-import it.unipr.aotlab.mapreduce.countword.CountWordMap;
-import it.unipr.aotlab.mapreduce.countword.CountWordReduce;
 
 /**
  * Boot for Cipher algorithm
