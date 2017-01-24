@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+
+<!-- Build file for Map Redoce on AOT Lab ActoDeS project-->
+
+<!-- ==========================================================================
+
+  The following properties need to be set in build.properties contained
+  in the main build directory,
+
+  java.home[REQUIRED] The path to the JDK home directory
+
+  ant.home[REQUIRED] The path to the Ant home directory
+
+=========================================================================== -->
+
+<project name="MapReduce on ActoDeS project builder" default="compile" basedir=".."
+           xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+
+	  <!-- ==================================================================== -->
+	  <!-- Sets Project properties                                              -->
+	  <!-- ==================================================================== -->
+
+	  <target name="set-properties" description="Sets project properties">
+	   	<!-- Java sources directory -->
+	    <property name="java.dir" value="src"/>
+	    	
+	    <!-- Software libraries directory -->
+	    <property name="lib.dir" value="lib"/>
+
+	    <!-- Software bynary directory -->
+	    <property name="bin.dir" value="bin"/>
+
+	    <!-- Temporary location for classes -->
+	    <property name="classes.dir" value="${bin.dir}"/>
+
+	  	<!-- Documentation directory -->
+	    <property name="docs.dir" value="docs"/>
+
+	  	<!-- API docflex directory -->
+	    <property name="docflex.dir" value="docflex"/>
+
+	    <!-- Checkstyle directory -->
+	    <property name="checkstyle.dir" value="checkstyle"/>
+
+	    <!-- Report directory -->
+	    <property name="reports.dir" value="reports"/>
+
+	  	<!-- ActoDeS compilation class path -->
+	    <path id="compilation.path">
+	      <fileset dir="${lib.dir}">
+	        <include name="**/*.jar"/>
+	      </fileset>
+	    </path>
+
+	    <!-- ActoDeS execution class path -->
+	    <path id="execution.path">
+	      <fileset dir="${lib.dir}">
+	        <include name="**/*.jar"/>
+	      </fileset>
+	      <fileset dir="${bin.dir}">
+	        <include name="**/*.jar"/>
+	      </fileset>
+	    </path>
+
+	  	<!-- ActoDeS package directory -->
+	    <property name="actodes.dir" value="it/unipr/aotlab/actodes/"/>
+	  	<!-- ActoDeS examples package directory -->
+	    <property name="actodes-examples.dir" value="${actodes.dir}/examples"/>
+	  	<!-- ActoMos package directory -->
+	    <property name="actomos.dir" value="it/unipr/aotlab/actomos/"/>
+	  	<!-- ActoMos C2D examples package directory -->
+	    <property name="c2d-examples.dir" value="${actomos.dir}/c2d/examples"/>
+	  	<!-- ActoMos D2D examples package directory -->
+	    <property name="d2d-examples.dir" value="${actomos.dir}/d2d/examples"/>
+	  </target>
+
+
+  <!-- ==================================================================== -->
+  <!--  Cleans temporary files, classes and jar files                       --> 
+  <!-- ==================================================================== -->
+
+  <target name="clean" depends="set-properties"
+   	      description="Removes temporary files">
+    <delete file="${checkstyle.dir}/checkstyle-errors.txt" quiet="true"/>
+  	<delete dir="${classes.dir}" quiet="true"/> 
+    <delete dir="${docs.dir}/api" quiet="true"/>
+    <delete quiet="true">
+      <fileset dir="${docs.dir}" includes="*.rtf"/>
+        <fileset dir="${docs.dir}" includes="*.jar"/>
+    </delete>
+  </target>
+
+  <!-- ==================================================================== -->
+  <!-- Compiles Java files                                                  -->
+  <!-- ==================================================================== -->
+
+  <target name="compile" depends="clean" description="Compiles Java files">
+    <mkdir dir="${classes.dir}"/>
+  	<javac debug="on" includeAntRuntime="no"
+           destdir="${classes.dir}">
+      <compilerarg value="-Xlint:unchecked"/>
+      <src path="${java.dir}"/>
+      <classpath refid="compilation.path"/>
+    </javac>
+    <copy todir="${classes.dir}">
+        <fileset dir="${java.dir}" includes="**/*.properties"/>
+    </copy>
+    <copy todir="${classes.dir}">
+      <fileset dir="${lib.dir}" includes="*.properties"/>
+    </copy>
+  </target>
+
+  <!-- ==================================================================== -->
+  <!-- Builds API HTML tree documentation                                   -->
+  <!-- ==================================================================== -->
+
+  <target name="javadoc" depends="compile" description="Creates javadoc">
+    <delete dir="${docs.dir}/api"/> 
+    <javadoc destdir="${docs.dir}/api" sourcepath="${java.dir}"
+    	author="false" version="true" source="1.8">
+    	<link href="http://docs.oracle.com/javase/8/docs/api/"/>
+      <link href="http://docs.oracle.com/javaee/6/api/"/>
+      <classpath refid="compilation.path"/>
+    </javadoc>
+  </target>
+
+</project>
